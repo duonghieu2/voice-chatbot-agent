@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Chatbot Agent - Đặt Xe & Đặt Đồ Ăn</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="glow-bg-1"></div>
+    <div class="glow-bg-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-microphone-lines icon-gradient"></i>
+                <h1>AI Voice Chatbot Agent</h1>
+            </div>
+            <div class="subtitle">Sandbox đặt xe & đặt đồ ăn (Tuần 4 & 5)</div>
+            <div class="api-status">
+                <span class="status-dot"></span>
+                <span>API Connected</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard-grid">
+            <!-- Left Panel: Input & Preloaded Samples -->
+            <section class="panel left-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-gears"></i> Bộ Điều Khiển Đầu Vào</h2>
+                </div>
+
+                <!-- Live Audio Capture / Recording -->
+                <div class="card voice-capture-card">
+                    <h3>Ghi Âm Trực Tiếp</h3>
+                    <div class="recorder-controls">
+                        <button id="record-btn" class="btn btn-record">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                        <div class="recording-state">
+                            <span id="record-status">Sẵn sàng ghi âm</span>
+                            <span id="record-timer" class="hidden">00:00</span>
+                        </div>
+                    </div>
+                    <!-- Wave Visualizer Simulation -->
+                    <div id="wave-container" class="wave-visualizer hidden">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                </div>
+
+                <!-- File Upload -->
+                <div class="card file-upload-card">
+                    <h3>Tải Lên Tệp Âm Thanh</h3>
+                    <div id="drop-zone" class="drop-zone">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <p>Kéo thả hoặc <span>nhấp vào đây</span> để chọn file</p>
+                        <span class="file-limits">Hỗ trợ .mp3, .wav (tối đa 10MB)</span>
+                        <input type="file" id="file-input" accept="audio/mpeg, audio/wav" class="hidden">
+                    </div>
+                    <div id="file-details" class="file-details hidden">
+                        <i class="fa-solid fa-file-audio"></i>
+                        <span id="file-name">filename.mp3</span>
+                        <button id="clear-file" class="btn-clear"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+
+                <!-- Preloaded Samples -->
+                <div class="card samples-card">
+                    <div class="samples-header">
+                        <h3>20 Ca Kiểm Thử Mẫu (Prompts)</h3>
+                        <div class="filter-controls">
+                            <button class="filter-btn active" data-filter="all">Tất cả</button>
+                            <button class="filter-btn" data-filter="ride">Đặt xe</button>
+                            <button class="filter-btn" data-filter="food">Đồ ăn</button>
+                        </div>
+                    </div>
+                    <div class="samples-list-container">
+                        <div id="samples-list" class="samples-list">
+                            <!-- Dynamically loaded -->
+                            <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải dữ liệu...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: End-to-End Pipeline Visualization -->
+            <section class="panel right-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-network-wired"></i> Quy Trình Xử Lý End-to-End Pipeline</h2>
+                    <button id="run-pipeline-btn" class="btn btn-primary" disabled>
+                        <i class="fa-solid fa-play"></i> Chạy Pipeline
+                    </button>
+                </div>
+
+                <div class="pipeline-container">
+                    <!-- Step 1: Audio Input -->
+                    <div class="pipeline-step" id="step-audio">
+                        <div class="step-icon"><i class="fa-solid fa-wave-square"></i></div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <span class="step-num">Bước 1</span>
+                                <h4>Audio Input</h4>
+                                <span class="step-badge" id="audio-type-badge">Chưa nạp</span>
+                            </div>
+                            <div class="step-details" id="step-audio-details">
+                                <p class="placeholder-text">Chưa nhận được âm thanh đầu vào.</p>
+                                <div id="audio-player-container" class="hidden">
+                                    <audio id="audio-player" controls></audio>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: ASR Transcription -->
+                    <div class="pipeline-step" id="step-asr">
+                        <div class="step-icon"><i class="fa-solid fa-file-audio"></i></div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <span class="step-num">Bước 2</span>
+                                <h4>ASR (Speech-to-Text)</h4>
+                                <span class="step-badge badge-whisper hidden">Whisper Tiny</span>
+                            </div>
+                            <div class="step-details" id="step-asr-details">
+                                <p class="placeholder-text">Đang chờ âm thanh...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: LLM Intent & Entity Extraction -->
+                    <div class="pipeline-step" id="step-llm">
+                        <div class="step-icon"><i class="fa-solid fa-brain"></i></div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <span class="step-num">Bước 3</span>
+                                <h4>LLM Intent & Entity Extraction</h4>
+                                <span class="step-badge badge-gemini hidden">Gemini 3.1 Flash-Lite</span>
+                            </div>
+                            <div class="step-details" id="step-llm-details">
+                                <p class="placeholder-text">Đang chờ văn bản ASR...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Tool Execution -->
+                    <div class="pipeline-step" id="step-tool">
+                        <div class="step-icon"><i class="fa-solid fa-database"></i></div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <span class="step-num">Bước 4</span>
+                                <h4>Tool Calling & Backend Database Query</h4>
+                                <span class="step-badge badge-db hidden">Mock DB</span>
+                            </div>
+                            <div class="step-details" id="step-tool-details">
+                                <p class="placeholder-text">Đang chờ phân tích ý định...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Final Response -->
+                    <div class="pipeline-step" id="step-response">
+                        <div class="step-icon"><i class="fa-solid fa-comments"></i></div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <span class="step-num">Bước 5</span>
+                                <h4>Final Agent Response</h4>
+                                <button id="tts-btn" class="btn btn-tts hidden" title="Phát giọng đọc">
+                                    <i class="fa-solid fa-volume-high"></i> Nói
+                                </button>
+                            </div>
+                            <div class="step-details" id="step-response-details">
+                                <p class="placeholder-text">Đang chờ câu trả lời hoàn thiện...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Floating status alerts -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

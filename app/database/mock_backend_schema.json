@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MockBackendDatabaseSchema",
+  "type": "object",
+  "required": ["users", "rides", "food_orders", "payments", "refunds", "tickets", "policies"],
+  "properties": {
+    "users": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "name", "phone"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "phone": { "type": "string" }
+        }
+      }
+    },
+    "rides": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "user_id", "driver_name", "driver_phone", "vehicle_plate", "vehicle_type", "status", "pickup_address", "dropoff_address", "price", "payment_method", "payment_status", "eta", "created_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "user_id": { "type": "string" },
+          "driver_name": { "type": "string" },
+          "driver_phone": { "type": "string" },
+          "vehicle_plate": { "type": "string" },
+          "vehicle_type": { "type": "string" },
+          "status": { "type": "string", "enum": ["searching", "accepted", "arriving", "in_progress", "completed", "cancelled"] },
+          "pickup_address": { "type": "string" },
+          "dropoff_address": { "type": "string" },
+          "price": { "type": "number" },
+          "payment_method": { "type": "string" },
+          "payment_status": { "type": "string", "enum": ["pending", "success", "failed", "refunded"] },
+          "eta": { "type": "string" },
+          "created_at": { "type": "string" }
+        }
+      }
+    },
+    "food_orders": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "user_id", "restaurant_name", "status", "items", "subtotal", "delivery_fee", "discount", "total", "payment_method", "payment_status", "eta", "items_missing", "created_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "user_id": { "type": "string" },
+          "restaurant_name": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "preparing", "delivering", "completed", "cancelled"] },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "qty", "price"],
+              "properties": {
+                "name": { "type": "string" },
+                "qty": { "type": "integer" },
+                "price": { "type": "number" }
+              }
+            }
+          },
+          "subtotal": { "type": "number" },
+          "delivery_fee": { "type": "number" },
+          "discount": { "type": "number" },
+          "total": { "type": "number" },
+          "payment_method": { "type": "string" },
+          "payment_status": { "type": "string" },
+          "eta": { "type": "string" },
+          "items_missing": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "created_at": { "type": "string" }
+        }
+      }
+    },
+    "payments": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "target_id", "target_type", "amount", "method", "status", "created_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "target_id": { "type": "string" },
+          "target_type": { "type": "string", "enum": ["ride", "food"] },
+          "amount": { "type": "number" },
+          "method": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "success", "failed", "refunded"] },
+          "created_at": { "type": "string" }
+        }
+      }
+    },
+    "refunds": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "payment_id", "amount", "reason", "status", "created_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "payment_id": { "type": "string" },
+          "amount": { "type": "number" },
+          "reason": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+          "created_at": { "type": "string" }
+        }
+      }
+    },
+    "tickets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "user_id", "category", "description", "status", "created_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "user_id": { "type": "string" },
+          "category": { "type": "string" },
+          "description": { "type": "string" },
+          "status": { "type": "string", "enum": ["open", "in_progress", "resolved"] },
+          "created_at": { "type": "string" }
+        }
+      }
+    },
+    "policies": {
+      "type": "object",
+      "required": ["ride_cancellation_fee", "ride_cancellation_policy", "food_refund_policy", "support_sla"],
+      "properties": {
+        "ride_cancellation_fee": { "type": "number" },
+        "ride_cancellation_policy": { "type": "string" },
+        "food_refund_policy": { "type": "string" },
+        "support_sla": { "type": "string" }
+      }
+    }
+  }
+}

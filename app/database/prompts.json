@@ -1,0 +1,195 @@
+[
+  {
+    "id": "P001",
+    "domain": "ride",
+    "category": "driver_late",
+    "text": "Tài xế của tôi đang ở đâu thế, trong app báo 5 phút nữa tới mà tôi đợi 15 phút rồi.",
+    "expected_intent": "check_ride_status",
+    "expected_entities": {
+      "ride_id": "R101"
+    }
+  },
+  {
+    "id": "P002",
+    "domain": "ride",
+    "category": "driver_late",
+    "text": "Sao xe chưa tới đón tôi nữa, tôi trễ giờ làm rồi này.",
+    "expected_intent": "check_ride_status",
+    "expected_entities": {
+      "ride_id": "R101"
+    }
+  },
+  {
+    "id": "P003",
+    "domain": "ride",
+    "category": "driver_late",
+    "text": "Tài xế R101 lái xe đi đâu vậy? Trên bản đồ thấy đi ngược hướng với tôi.",
+    "expected_intent": "check_ride_status",
+    "expected_entities": {
+      "ride_id": "R101"
+    }
+  },
+  {
+    "id": "P004",
+    "domain": "ride",
+    "category": "payment_error",
+    "text": "Tôi bị trừ 10 nghìn phí hủy chuyến R103 dù lỗi là do tài xế không tới.",
+    "expected_intent": "check_ride_cancellation_fee",
+    "expected_entities": {
+      "ride_id": "R103"
+    }
+  },
+  {
+    "id": "P005",
+    "domain": "ride",
+    "category": "payment_error",
+    "text": "Tại sao tôi bị trừ tiền phí hủy chuyến R103 vậy?",
+    "expected_intent": "check_ride_cancellation_fee",
+    "expected_entities": {
+      "ride_id": "R103"
+    }
+  },
+  {
+    "id": "P006",
+    "domain": "ride",
+    "category": "refund_request",
+    "text": "Tôi muốn được hoàn tiền cho chuyến xe R102 này vì tài xế không phục vụ tốt.",
+    "expected_intent": "request_refund",
+    "expected_entities": {
+      "ride_id": "R102",
+      "payment_id": "PAY102"
+    }
+  },
+  {
+    "id": "P007",
+    "domain": "ride",
+    "category": "refund_request",
+    "text": "Hoàn lại tiền phí hủy chuyến R103 cho tôi vì tôi không chủ động hủy.",
+    "expected_intent": "request_refund",
+    "expected_entities": {
+      "ride_id": "R103"
+    }
+  },
+  {
+    "id": "P008",
+    "domain": "ride",
+    "category": "escalate",
+    "text": "Tôi muốn khiếu nại thái độ của tài xế R101, hãy chuyển cho nhân viên xử lý.",
+    "expected_intent": "escalate_to_support",
+    "expected_entities": {
+      "ride_id": "R101"
+    }
+  },
+  {
+    "id": "P009",
+    "domain": "ride",
+    "category": "escalate",
+    "text": "Tôi cần gặp tổng đài viên trực tiếp để nói chuyện.",
+    "expected_intent": "escalate_to_support",
+    "expected_entities": {}
+  },
+  {
+    "id": "P010",
+    "domain": "food",
+    "category": "delivery_delay",
+    "text": "Đơn hàng F201 của tôi chuẩn bị xong lâu rồi mà sao shipper chưa giao tới?",
+    "expected_intent": "check_food_order_status",
+    "expected_entities": {
+      "order_id": "F201"
+    }
+  },
+  {
+    "id": "P011",
+    "domain": "food",
+    "category": "delivery_delay",
+    "text": "Sao đơn bún chả F201 của tôi giao lâu quá vậy? Hơn 1 tiếng rồi chưa thấy đâu.",
+    "expected_intent": "check_food_order_status",
+    "expected_entities": {
+      "order_id": "F201"
+    }
+  },
+  {
+    "id": "P012",
+    "domain": "food",
+    "category": "missing_item",
+    "text": "Đơn F202 giao thiếu phần khoai tây chiên của tôi rồi, làm việc kiểu gì vậy?",
+    "expected_intent": "check_food_order_status",
+    "expected_entities": {
+      "order_id": "F202",
+      "missing_item": "Khoai tây chiên cỡ lớn"
+    }
+  },
+  {
+    "id": "P013",
+    "domain": "food",
+    "category": "missing_item",
+    "text": "Tôi nhận đơn Burger King F202 nhưng mở ra không thấy nước uống Coca Cola đâu hết.",
+    "expected_intent": "check_food_order_status",
+    "expected_entities": {
+      "order_id": "F202",
+      "missing_item": "Coca Cola"
+    }
+  },
+  {
+    "id": "P014",
+    "domain": "food",
+    "category": "payment_error",
+    "text": "Tôi áp mã giảm giá 20 nghìn cho đơn F203 mà sao lúc thanh toán bằng thẻ vẫn bị trừ đủ tiền gốc?",
+    "expected_intent": "check_food_order_status",
+    "expected_entities": {
+      "order_id": "F203"
+    }
+  },
+  {
+    "id": "P015",
+    "domain": "food",
+    "category": "payment_error",
+    "text": "Shipper đòi thu thêm tiền ship trong khi tôi đã thanh toán qua thẻ rồi.",
+    "expected_intent": "escalate_to_support",
+    "expected_entities": {}
+  },
+  {
+    "id": "P016",
+    "domain": "food",
+    "category": "refund_request",
+    "text": "Tôi muốn hoàn tiền cho giao dịch PAY202 do thiếu món.",
+    "expected_intent": "request_refund",
+    "expected_entities": {
+      "payment_id": "PAY202"
+    }
+  },
+  {
+    "id": "P017",
+    "domain": "food",
+    "category": "refund_request",
+    "text": "Hoàn tiền món khoai tây chiên bị thiếu của đơn F202 cho tôi.",
+    "expected_intent": "request_refund",
+    "expected_entities": {
+      "order_id": "F202"
+    }
+  },
+  {
+    "id": "P018",
+    "domain": "food",
+    "category": "refund_request",
+    "text": "Tôi muốn hoàn lại 35 nghìn đồng cho phần ăn bị thiếu trong đơn Burger King.",
+    "expected_intent": "request_refund",
+    "expected_entities": {}
+  },
+  {
+    "id": "P019",
+    "domain": "food",
+    "category": "escalate",
+    "text": "Đơn hàng của tôi bị hỏng hết rồi, cho tôi gặp nhân viên trực tiếp đi.",
+    "expected_intent": "escalate_to_support",
+    "expected_entities": {}
+  },
+  {
+    "id": "P020",
+    "domain": "food",
+    "category": "escalate",
+    "text": "Tôi muốn phản ánh cửa hàng làm ăn cẩu thả, kết nối tôi với tổng đài viên.",
+    "expected_intent": "escalate_to_support",
+    "expected_entities": {}
+  }
+]

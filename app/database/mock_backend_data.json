@@ -1,0 +1,798 @@
+{
+  "users": {
+    "U001": {
+      "id": "U001",
+      "name": "Nguyễn Văn A",
+      "phone": "0901234567"
+    },
+    "U002": {
+      "id": "U002",
+      "name": "Trần Thị B",
+      "phone": "0907654321"
+    },
+    "U003": {
+      "id": "U003",
+      "name": "Phạm Quốc C",
+      "phone": "0912345678"
+    },
+    "U004": {
+      "id": "U004",
+      "name": "Lê Thị D",
+      "phone": "0934567890"
+    },
+    "U005": {
+      "id": "U005",
+      "name": "Hoàng Văn E",
+      "phone": "0987654321"
+    }
+  },
+  "rides": {
+    "R101": {
+      "id": "R101",
+      "user_id": "U001",
+      "driver_name": "Lê Văn C",
+      "driver_phone": "0911112222",
+      "vehicle_plate": "29A-12345",
+      "vehicle_type": "Car 4 seats",
+      "status": "arriving",
+      "pickup_address": "Trần Hưng Đạo",
+      "dropoff_address": "Nguyễn Du",
+      "price": 50000.0,
+      "payment_method": "Cash",
+      "payment_status": "pending",
+      "eta": "5 phút",
+      "created_at": "2026-06-02T08:45:00"
+    },
+    "R102": {
+      "id": "R102",
+      "user_id": "U001",
+      "driver_name": "Phạm Văn D",
+      "driver_phone": "0911113333",
+      "vehicle_plate": "30F-98765",
+      "vehicle_type": "Car 7 seats",
+      "status": "completed",
+      "pickup_address": "Lý Thường Kiệt",
+      "dropoff_address": "Hai Bà Trưng",
+      "price": 80000.0,
+      "payment_method": "Credit Card",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-06-02T05:30:00"
+    },
+    "R103": {
+      "id": "R103",
+      "user_id": "U002",
+      "driver_name": "Nguyễn Văn E",
+      "driver_phone": "0911114444",
+      "vehicle_plate": "29C-55555",
+      "vehicle_type": "Bike",
+      "status": "cancelled",
+      "pickup_address": "Cầu Giấy",
+      "dropoff_address": "Hồ Tây",
+      "price": 120000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "failed",
+      "eta": "0 phút",
+      "created_at": "2026-06-02T06:00:00"
+    },
+    "R104": {
+      "id": "R104",
+      "user_id": "U003",
+      "driver_name": "Trần Văn F",
+      "driver_phone": "0911115555",
+      "vehicle_plate": "30H-77777",
+      "vehicle_type": "Bike",
+      "status": "searching",
+      "pickup_address": "Kim Mã",
+      "dropoff_address": "Giảng Võ",
+      "price": 30000.0,
+      "payment_method": "Cash",
+      "payment_status": "pending",
+      "eta": "Đang tìm",
+      "created_at": "2026-06-02T09:00:00"
+    },
+    "R105": {
+      "id": "R105",
+      "user_id": "U004",
+      "driver_name": "Bùi Văn G",
+      "driver_phone": "0911116666",
+      "vehicle_plate": "29D-88888",
+      "vehicle_type": "Car 4 seats",
+      "status": "completed",
+      "pickup_address": "Hoàng Hoa Thám",
+      "dropoff_address": "Thụy Khuê",
+      "price": 60000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-06-02T04:15:00"
+    },
+    "R106": {
+      "id": "R106",
+      "user_id": "U005",
+      "driver_name": "Đỗ Văn H",
+      "driver_phone": "0911117777",
+      "vehicle_plate": "30G-99999",
+      "vehicle_type": "Car 4 seats",
+      "status": "completed",
+      "pickup_address": "Giải Phóng",
+      "dropoff_address": "Lê Duẩn",
+      "price": 45000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-06-02T03:00:00"
+    },
+    "R107": {
+      "id": "R107",
+      "user_id": "U002",
+      "driver_name": "Vũ Văn I",
+      "driver_phone": "0911118888",
+      "vehicle_plate": "29E-11111",
+      "vehicle_type": "Bike",
+      "status": "completed",
+      "pickup_address": "Đội Cấn",
+      "dropoff_address": "Liễu Giai",
+      "price": 25000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-06-01T21:00:00"
+    },
+    "R108": {
+      "id": "R108",
+      "user_id": "U003",
+      "driver_name": "Phan Văn J",
+      "driver_phone": "0911119999",
+      "vehicle_plate": "30K-22222",
+      "vehicle_type": "Car 7 seats",
+      "status": "completed",
+      "pickup_address": "Tây Sơn",
+      "dropoff_address": "Chùa Bộc",
+      "price": 75000.0,
+      "payment_method": "Credit Card",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-06-01T18:00:00"
+    },
+    "R109": {
+      "id": "R109",
+      "user_id": "U004",
+      "driver_name": "Lâm Văn K",
+      "driver_phone": "0911120000",
+      "vehicle_plate": "29F-33333",
+      "vehicle_type": "Car 4 seats",
+      "status": "completed",
+      "pickup_address": "Nguyễn Trãi",
+      "dropoff_address": "Tây Sơn",
+      "price": 55000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-06-01T15:00:00"
+    },
+    "R110": {
+      "id": "R110",
+      "user_id": "U001",
+      "driver_name": "Lê Văn C",
+      "driver_phone": "0911112222",
+      "vehicle_plate": "29A-12345",
+      "vehicle_type": "Car 4 seats",
+      "status": "completed",
+      "pickup_address": "Hàng Bông",
+      "dropoff_address": "Hàng Gai",
+      "price": 40000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-05-30T10:00:00"
+    },
+    "R111": {
+      "id": "R111",
+      "user_id": "U005",
+      "driver_name": "Hoàng Văn L",
+      "driver_phone": "0911121111",
+      "vehicle_plate": "30L-44444",
+      "vehicle_type": "Bike",
+      "status": "completed",
+      "pickup_address": "Đại Cồ Việt",
+      "dropoff_address": "Phố Huế",
+      "price": 20000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-05-29T09:00:00"
+    },
+    "R112": {
+      "id": "R112",
+      "user_id": "U002",
+      "driver_name": "Nguyễn Văn E",
+      "driver_phone": "0911114444",
+      "vehicle_plate": "29C-55555",
+      "vehicle_type": "Bike",
+      "status": "completed",
+      "pickup_address": "Láng Hạ",
+      "dropoff_address": "Thành Công",
+      "price": 25000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-05-28T14:00:00"
+    },
+    "R113": {
+      "id": "R113",
+      "user_id": "U003",
+      "driver_name": "Ngô Văn M",
+      "driver_phone": "0911122222",
+      "vehicle_plate": "29G-66666",
+      "vehicle_type": "Car 4 seats",
+      "status": "completed",
+      "pickup_address": "Thái Hà",
+      "dropoff_address": "Huỳnh Thúc Kháng",
+      "price": 40000.0,
+      "payment_method": "Credit Card",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-05-27T16:00:00"
+    },
+    "R114": {
+      "id": "R114",
+      "user_id": "U004",
+      "driver_name": "Đặng Văn N",
+      "driver_phone": "0911123333",
+      "vehicle_plate": "30M-77777",
+      "vehicle_type": "Car 4 seats",
+      "status": "completed",
+      "pickup_address": "Phạm Văn Đồng",
+      "dropoff_address": "Xuân Thủy",
+      "price": 65000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-05-26T08:00:00"
+    },
+    "R115": {
+      "id": "R115",
+      "user_id": "U005",
+      "driver_name": "Dương Văn O",
+      "driver_phone": "0911124444",
+      "vehicle_plate": "29H-88888",
+      "vehicle_type": "Bike",
+      "status": "completed",
+      "pickup_address": "Cát Linh",
+      "dropoff_address": "Hào Nam",
+      "price": 22000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "created_at": "2026-05-25T11:00:00"
+    }
+  },
+  "food_orders": {
+    "F201": {
+      "id": "F201",
+      "user_id": "U001",
+      "restaurant_name": "Bún Chả Sinh Từ",
+      "status": "preparing",
+      "items": [
+        {
+          "name": "Bún chả đặc biệt",
+          "qty": 2,
+          "price": 60000.0
+        },
+        {
+          "name": "Trà đá",
+          "qty": 2,
+          "price": 5000.0
+        }
+      ],
+      "subtotal": 130000.0,
+      "delivery_fee": 15000.0,
+      "discount": 0.0,
+      "total": 145000.0,
+      "payment_method": "Cash",
+      "payment_status": "pending",
+      "eta": "15 phút",
+      "items_missing": [],
+      "created_at": "2026-06-02T08:35:00"
+    },
+    "F202": {
+      "id": "F202",
+      "user_id": "U001",
+      "restaurant_name": "Burger King - Bà Triệu",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Whopper Cheese Burger",
+          "qty": 1,
+          "price": 89000.0
+        },
+        {
+          "name": "Khoai tây chiên cỡ lớn",
+          "qty": 1,
+          "price": 35000.0
+        },
+        {
+          "name": "Coca Cola",
+          "qty": 1,
+          "price": 20000.0
+        }
+      ],
+      "subtotal": 144000.0,
+      "delivery_fee": 20000.0,
+      "discount": 0.0,
+      "total": 164000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [
+        "Khoai tây chiên cỡ lớn"
+      ],
+      "created_at": "2026-06-02T05:00:00"
+    },
+    "F203": {
+      "id": "F203",
+      "user_id": "U002",
+      "restaurant_name": "Pizza Company",
+      "status": "delivering",
+      "items": [
+        {
+          "name": "Pizza Hải Sản",
+          "qty": 1,
+          "price": 250000.0
+        }
+      ],
+      "subtotal": 250000.0,
+      "delivery_fee": 25000.0,
+      "discount": 20000.0,
+      "total": 255000.0,
+      "payment_method": "Credit Card",
+      "payment_status": "success",
+      "eta": "30 phút",
+      "items_missing": [],
+      "created_at": "2026-06-02T08:20:00"
+    },
+    "F204": {
+      "id": "F204",
+      "user_id": "U002",
+      "restaurant_name": "Gongcha - Giảng Võ",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Trà sữa Trân châu đen",
+          "qty": 2,
+          "price": 55000.0
+        },
+        {
+          "name": "Thạch nha đam",
+          "qty": 1,
+          "price": 10000.0
+        }
+      ],
+      "subtotal": 120000.0,
+      "delivery_fee": 15000.0,
+      "discount": 10000.0,
+      "total": 125000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [
+        "Thạch nha đam"
+      ],
+      "created_at": "2026-06-01T20:00:00"
+    },
+    "F205": {
+      "id": "F205",
+      "user_id": "U003",
+      "restaurant_name": "KFC - Nguyễn Thái Học",
+      "status": "cancelled",
+      "items": [
+        {
+          "name": "Combo gà giòn cay 3 miếng",
+          "qty": 1,
+          "price": 110000.0
+        }
+      ],
+      "subtotal": 110000.0,
+      "delivery_fee": 20000.0,
+      "discount": 0.0,
+      "total": 130000.0,
+      "payment_method": "Cash",
+      "payment_status": "failed",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-06-01T19:00:00"
+    },
+    "F206": {
+      "id": "F206",
+      "user_id": "U004",
+      "restaurant_name": "Cơm sườn Đào Duy Anh",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Cơm sườn chả trứng",
+          "qty": 2,
+          "price": 45000.0
+        }
+      ],
+      "subtotal": 90000.0,
+      "delivery_fee": 15000.0,
+      "discount": 15000.0,
+      "total": 90000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-06-01T12:00:00"
+    },
+    "F207": {
+      "id": "F207",
+      "user_id": "U005",
+      "restaurant_name": "Phở cuốn Hương Mai",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Phở cuốn thập cẩm",
+          "qty": 1,
+          "price": 70000.0
+        },
+        {
+          "name": "Phở chiên phồng",
+          "qty": 1,
+          "price": 65000.0
+        }
+      ],
+      "subtotal": 135000.0,
+      "delivery_fee": 20000.0,
+      "discount": 0.0,
+      "total": 155000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-31T18:00:00"
+    },
+    "F208": {
+      "id": "F208",
+      "user_id": "U001",
+      "restaurant_name": "Bánh mì dân tổ",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Bánh mì đặc biệt",
+          "qty": 3,
+          "price": 30000.0
+        }
+      ],
+      "subtotal": 90000.0,
+      "delivery_fee": 25000.0,
+      "discount": 10000.0,
+      "total": 105000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-30T07:00:00"
+    },
+    "F209": {
+      "id": "F209",
+      "user_id": "U003",
+      "restaurant_name": "Highlands Coffee",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Phin sữa đá cỡ vừa",
+          "qty": 2,
+          "price": 39000.0
+        }
+      ],
+      "subtotal": 78000.0,
+      "delivery_fee": 15000.0,
+      "discount": 0.0,
+      "total": 93000.0,
+      "payment_method": "Credit Card",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-29T15:00:00"
+    },
+    "F210": {
+      "id": "F210",
+      "user_id": "U004",
+      "restaurant_name": "Phúc Long - Lý Thường Kiệt",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Hồng trà sữa cỡ lớn",
+          "qty": 1,
+          "price": 50000.0
+        }
+      ],
+      "subtotal": 50000.0,
+      "delivery_fee": 15000.0,
+      "discount": 5000.0,
+      "total": 60000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-28T10:00:00"
+    },
+    "F211": {
+      "id": "F211",
+      "user_id": "U002",
+      "restaurant_name": "Nét Huế - Hàng Bông",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Bún bò Huế đặc biệt",
+          "qty": 1,
+          "price": 65000.0
+        }
+      ],
+      "subtotal": 65000.0,
+      "delivery_fee": 15000.0,
+      "discount": 0.0,
+      "total": 80000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-27T12:00:00"
+    },
+    "F212": {
+      "id": "F212",
+      "user_id": "U005",
+      "restaurant_name": "Jollibee - Phạm Ngọc Thạch",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Mì Ý sốt bò bằm",
+          "qty": 1,
+          "price": 40000.0
+        },
+        {
+          "name": "Gà giòn vui vẻ",
+          "qty": 1,
+          "price": 35000.0
+        }
+      ],
+      "subtotal": 75000.0,
+      "delivery_fee": 20000.0,
+      "discount": 0.0,
+      "total": 95000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-26T19:00:00"
+    },
+    "F213": {
+      "id": "F213",
+      "user_id": "U001",
+      "restaurant_name": "Lotteria - Lương Thế Vinh",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Combo Burger tôm",
+          "qty": 1,
+          "price": 80000.0
+        }
+      ],
+      "subtotal": 80000.0,
+      "delivery_fee": 20000.0,
+      "discount": 15000.0,
+      "total": 85000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-25T18:00:00"
+    },
+    "F214": {
+      "id": "F214",
+      "user_id": "U003",
+      "restaurant_name": "Bún cá Út Hà",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Bún cá đặc sản",
+          "qty": 1,
+          "price": 45000.0
+        }
+      ],
+      "subtotal": 45000.0,
+      "delivery_fee": 15000.0,
+      "discount": 0.0,
+      "total": 60000.0,
+      "payment_method": "Cash",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-24T08:00:00"
+    },
+    "F215": {
+      "id": "F215",
+      "user_id": "U004",
+      "restaurant_name": "Bún đậu Trung Hương",
+      "status": "completed",
+      "items": [
+        {
+          "name": "Suất bún đậu đầy đủ",
+          "qty": 2,
+          "price": 55000.0
+        }
+      ],
+      "subtotal": 110000.0,
+      "delivery_fee": 15000.0,
+      "discount": 10000.0,
+      "total": 115000.0,
+      "payment_method": "E-wallet",
+      "payment_status": "success",
+      "eta": "0 phút",
+      "items_missing": [],
+      "created_at": "2026-05-23T12:00:00"
+    }
+  },
+  "payments": {
+    "PAY102": {
+      "id": "PAY102",
+      "target_id": "R102",
+      "target_type": "ride",
+      "amount": 80000.0,
+      "method": "Credit Card",
+      "status": "success",
+      "created_at": "2026-06-02T05:35:00"
+    },
+    "PAY105": {
+      "id": "PAY105",
+      "target_id": "R105",
+      "target_type": "ride",
+      "amount": 60000.0,
+      "method": "E-wallet",
+      "status": "success",
+      "created_at": "2026-06-02T04:20:00"
+    },
+    "PAY107": {
+      "id": "PAY107",
+      "target_id": "R107",
+      "target_type": "ride",
+      "amount": 25000.0,
+      "method": "E-wallet",
+      "status": "success",
+      "created_at": "2026-06-01T21:05:00"
+    },
+    "PAY108": {
+      "id": "PAY108",
+      "target_id": "R108",
+      "target_type": "ride",
+      "amount": 75000.0,
+      "method": "Credit Card",
+      "status": "success",
+      "created_at": "2026-06-01T18:05:00"
+    },
+    "PAY113": {
+      "id": "PAY113",
+      "target_id": "R113",
+      "target_type": "ride",
+      "amount": 40000.0,
+      "method": "Credit Card",
+      "status": "success",
+      "created_at": "2026-05-27T16:05:00"
+    },
+    "PAY202": {
+      "id": "PAY202",
+      "target_id": "F202",
+      "target_type": "food",
+      "amount": 164000.0,
+      "method": "E-wallet",
+      "status": "success",
+      "created_at": "2026-06-02T05:05:00"
+    },
+    "PAY203": {
+      "id": "PAY203",
+      "target_id": "F203",
+      "target_type": "food",
+      "amount": 255000.0,
+      "method": "Credit Card",
+      "status": "success",
+      "created_at": "2026-06-02T08:21:00"
+    },
+    "PAY204": {
+      "id": "PAY204",
+      "target_id": "F204",
+      "target_type": "food",
+      "amount": 125000.0,
+      "method": "E-wallet",
+      "status": "success",
+      "created_at": "2026-06-01T20:05:00"
+    },
+    "PAY206": {
+      "id": "PAY206",
+      "target_id": "F206",
+      "target_type": "food",
+      "amount": 90000.0,
+      "method": "E-wallet",
+      "status": "success",
+      "created_at": "2026-06-01T12:05:00"
+    },
+    "PAY209": {
+      "id": "PAY209",
+      "target_id": "F209",
+      "target_type": "food",
+      "amount": 93000.0,
+      "method": "Credit Card",
+      "status": "success",
+      "created_at": "2026-05-29T15:05:00"
+    },
+    "PAY210": {
+      "id": "PAY210",
+      "target_id": "F210",
+      "target_type": "food",
+      "amount": 60000.0,
+      "method": "E-wallet",
+      "status": "success",
+      "created_at": "2026-05-28T10:05:00"
+    },
+    "PAY213": {
+      "id": "PAY213",
+      "target_id": "F213",
+      "target_type": "food",
+      "amount": 85000.0,
+      "method": "E-wallet",
+      "status": "success",
+      "created_at": "2026-05-25T18:05:00"
+    },
+    "PAY215": {
+      "id": "PAY215",
+      "target_id": "F215",
+      "target_type": "food",
+      "amount": 115000.0,
+      "method": "E-wallet",
+      "status": "success",
+      "created_at": "2026-05-23T12:05:00"
+    }
+  },
+  "refunds": {
+    "REF501": {
+      "id": "REF501",
+      "payment_id": "PAY102",
+      "amount": 80000.0,
+      "reason": "Tài xế lái ẩu gây tai nạn, hủy hành trình giữa chừng",
+      "status": "approved",
+      "created_at": "2026-06-02T06:00:00"
+    },
+    "REF502": {
+      "id": "REF502",
+      "payment_id": "PAY204",
+      "amount": 10000.0,
+      "reason": "Thiếu thạch nha đam trong cốc trà sữa của đơn F204",
+      "status": "approved",
+      "created_at": "2026-06-01T20:30:00"
+    }
+  },
+  "tickets": {
+    "TKT801": {
+      "id": "TKT801",
+      "user_id": "U002",
+      "category": "payment_dispute",
+      "description": "Khiếu nại bị thu hai lần tiền cho chuyến đi R103",
+      "status": "resolved",
+      "created_at": "2026-06-02T06:30:00"
+    },
+    "TKT802": {
+      "id": "TKT802",
+      "user_id": "U004",
+      "category": "driver_complaint",
+      "description": "Tài xế nói chuyện thô lỗ và đòi tip thêm tiền mặt",
+      "status": "in_progress",
+      "created_at": "2026-06-02T05:00:00"
+    }
+  },
+  "policies": {
+    "ride_cancellation_fee": 10000.0,
+    "ride_cancellation_policy": "Áp dụng phí hủy chuyến 10,000 VND khi hành khách tự ý hủy chuyến xe sau 2 phút từ lúc tài xế nhận chuyến hoặc khi tài xế đã di chuyển tới điểm đón đón hành khách.",
+    "food_refund_policy": "Hoàn tiền 100% giá trị món ăn bị giao thiếu hoặc giao sai theo hóa đơn gốc của nhà hàng. Số tiền hoàn được chuyển vào ví điện tử hoặc tài khoản gốc của hành khách trong vòng 1-3 ngày làm việc.",
+    "support_sla": "Thời gian giải quyết khiếu nại thường dưới 24h đối với sự cố hoàn phí, hủy xe và dưới 12h đối với sự cố giao thiếu món ăn."
+  }
+}

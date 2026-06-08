@@ -1,0 +1,26 @@
+[project]
+name = "voice-chatbot-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.136.3",
+    "google-generativeai>=0.8.6",
+    "jiwer>=4.0.0",
+    "librosa>=0.11.0",
+    "openai-whisper>=20250625",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.1",
+    "python-multipart>=0.0.30",
+    "rapidfuzz>=3.14.5",
+    "soundfile>=0.13.1",
+    "torch>=2.12.0",
+    "uvicorn>=0.48.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.3",
+]

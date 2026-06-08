@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Local environment variables
+.env
+
+# Pytest cache
+.pytest_cache/
+
+# Bỏ qua file text ngữ cảnh PDF
+pdf_content.txt
+
+# Bỏ qua tất cả các file định dạng PDF nếu có
+*.pdf
