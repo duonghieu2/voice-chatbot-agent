@@ -804,3 +804,30 @@ header h1 {
 .hidden {
     display: none !important;
 }
+
+/* TTS Voice Selection Dropdown */
+.tts-select {
+    background: rgba(30, 30, 38, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    font-family: inherit !important;
+    cursor: pointer !important;
+    outline: none !important;
+    max-width: 260px !important;
+    transition: all 0.3s ease !important;
+}
+
+.tts-select:hover {
+    border-color: var(--primary) !important;
+    background: rgba(30, 30, 38, 0.95) !important;
+}
+
+.tts-select option {
+    background-color: #1e1e24 !important;
+    color: #ffffff !important;
+    padding: 10px !important;
+    font-size: 12px !important;
+}

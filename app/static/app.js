@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let audioChunks = [];
     let recordTimerInterval = null;
     let recordStartTime = null;
+    let currentTtsAudio = null;
 
     // DOM Elements
     const recordBtn = document.getElementById('record-btn');
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const runPipelineBtn = document.getElementById('run-pipeline-btn');
     const ttsBtn = document.getElementById('tts-btn');
+    const ttsVoiceSelect = document.getElementById('tts-voice-select');
 
     // Pipeline Step Elements
     const stepAudio = document.getElementById('step-audio');
@@ -355,7 +357,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Reset Visuals
     function resetPipelineVisuals() {
         ttsBtn.classList.add('hidden');
-        window.speechSynthesis.cancel();
+        if (currentTtsAudio) {
+            currentTtsAudio.pause();
+            currentTtsAudio = null;
+        }
         ttsBtn.classList.remove('speaking');
         
         document.querySelectorAll('.pipeline-step').forEach(step => {
@@ -483,8 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </p>
             `;
             
-            // Enable TTS Button
+            // Enable TTS Button & Voice Selector
             ttsBtn.classList.remove('hidden');
+            ttsVoiceSelect.classList.remove('hidden');
             ttsBtn.onclick = () => speakText(pipeline.agent_response);
             
             showToast('Đã sinh câu trả lời chatbot cuối cùng!', 'success');
@@ -509,43 +515,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 7. TTS (Speech Synthesis) Helper
+    // 7. TTS Voice Selection Helper
+    function populateVoiceList() {
+        ttsVoiceSelect.innerHTML = `
+            <option value="vi-VN-HoaiMyNeural" selected>👩 Giọng Nữ - Hoài Mỹ (Edge Natural)</option>
+            <option value="vi-VN-NamMinhNeural">👨 Giọng Nam - Nam Minh (Edge Natural)</option>
+            <option value="en-US-AvaMultilingualNeural">👩 Giọng Nữ - Ava (Edge Multilingual)</option>
+            <option value="en-US-AndrewMultilingualNeural">👨 Giọng Nam - Andrew (Edge Multilingual)</option>
+        `;
+        // Hiển thị dropdown ngay lập tức
+        ttsVoiceSelect.classList.remove('hidden');
+    }
+
+    // 8. TTS (Speech Synthesis) Helper
     function speakText(text) {
-        if ('speechSynthesis' in window) {
-            // Cancel current speaking
-            window.speechSynthesis.cancel();
-            
-            if (!text) return;
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'vi-VN'; // Vietnamese voice
-            
-            // Try to find a Vietnamese voice on device
-            const voices = window.speechSynthesis.getVoices();
-            const viVoice = voices.find(voice => voice.lang.includes('vi') || voice.lang.includes('VI'));
-            if (viVoice) {
-                utterance.voice = viVoice;
-            }
-
-            utterance.onstart = () => {
-                ttsBtn.classList.add('speaking');
-                ttsBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Đang đọc...`;
-            };
-
-            utterance.onend = () => {
-                ttsBtn.classList.remove('speaking');
-                ttsBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Nói`;
-            };
-
-            utterance.onerror = () => {
-                ttsBtn.classList.remove('speaking');
-                ttsBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Nói`;
-            };
-
-            window.speechSynthesis.speak(utterance);
-        } else {
-            showToast('Trình duyệt của bạn không hỗ trợ đọc giọng nói (TTS)!', 'warning');
+        if (!text) return;
+        
+        // Stop current audio if playing
+        if (currentTtsAudio) {
+            currentTtsAudio.pause();
+            currentTtsAudio = null;
         }
+
+        const selectedVoice = ttsVoiceSelect.value;
+        const ttsUrl = `${API_URL}/chatbot/tts?text=${encodeURIComponent(text)}&voice=${encodeURIComponent(selectedVoice)}`;
+        
+        currentTtsAudio = new Audio(ttsUrl);
+        
+        currentTtsAudio.onplay = () => {
+            ttsBtn.classList.add('speaking');
+            ttsBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Đang đọc...`;
+        };
+
+        currentTtsAudio.onended = () => {
+            ttsBtn.classList.remove('speaking');
+            ttsBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Nói`;
+            currentTtsAudio = null;
+        };
+
+        currentTtsAudio.onerror = (e) => {
+            console.error('Lỗi khi phát âm thanh TTS:', e);
+            showToast('Không thể kết nối đến server để phát giọng nói Neural!', 'error');
+            ttsBtn.classList.remove('speaking');
+            ttsBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Nói`;
+            currentTtsAudio = null;
+        };
+
+        currentTtsAudio.play().catch(err => {
+            console.error('Không thể phát âm thanh:', err);
+            showToast('Vui lòng cấp quyền phát âm thanh tự động trên trình duyệt!', 'warning');
+            ttsBtn.classList.remove('speaking');
+            ttsBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Nói`;
+            currentTtsAudio = null;
+        });
     }
 
     // Delay helper
@@ -562,13 +584,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Initialize list of voices (Chrome needs this asynchronous trigger)
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.getVoices();
-        if (window.speechSynthesis.onvoiceschanged !== undefined) {
-            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-        }
-    }
+    // Initialize list of voices
+    populateVoiceList();
 
     // Bootstrap loading
     loadSamples();

@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "edge-tts>=7.2.8",
     "fastapi>=0.136.3",
     "google-generativeai>=0.8.6",
     "jiwer>=4.0.0",
@@ -12,6 +13,7 @@ dependencies = [
     "openai-whisper>=20250625",
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.1",
+    "python-docx>=1.2.0",
     "python-multipart>=0.0.30",
     "rapidfuzz>=3.14.5",
     "soundfile>=0.13.1",

@@ -174,9 +174,13 @@
                             <div class="step-header">
                                 <span class="step-num">Bước 5</span>
                                 <h4>Final Agent Response</h4>
-                                <button id="tts-btn" class="btn btn-tts hidden" title="Phát giọng đọc">
-                                    <i class="fa-solid fa-volume-high"></i> Nói
-                                </button>
+                                <div class="tts-controls" style="display: flex; gap: 8px; align-items: center;">
+                                    <select id="tts-voice-select" class="tts-select hidden" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-family: inherit; cursor: pointer; outline: none; max-width: 220px;">
+                                    </select>
+                                    <button id="tts-btn" class="btn btn-tts hidden" title="Phát giọng đọc">
+                                        <i class="fa-solid fa-volume-high"></i> Nói
+                                    </button>
+                                </div>
                             </div>
                             <div class="step-details" id="step-response-details">
                                 <p class="placeholder-text">Đang chờ câu trả lời hoàn thiện...</p>
