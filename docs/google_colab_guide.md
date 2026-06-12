@@ -37,13 +37,32 @@ Chạy lệnh sau trong một cell trên Colab để tải mã nguồn:
 
 ---
 
+## Bước 2.5: Cấu hình API Key & Biến môi trường (Colab Secrets)
+
+Để sử dụng mô hình LLM Gemini thật sự thay vì cơ chế dự phòng bằng Regex, bạn cần cấu hình API Key thông qua tính năng **Secrets (Khóa bí mật)** trên Colab:
+1. Nhấp vào biểu tượng chiếc chìa khóa **Secrets** ở thanh công cụ bên trái của Google Colab.
+2. Thêm một khóa mới tên là `GEMINI_API_KEY` và dán API Key của bạn vào phần Value.
+3. Bật quyền truy cập **Notebook access** cho khóa này.
+4. Tạo một cell mới trong Colab và chạy đoạn code Python dưới đây để nạp khóa bí mật vào môi trường hệ thống:
+```python
+import os
+from google.colab import userdata
+try:
+    os.environ["GEMINI_API_KEY"] = userdata.get("GEMINI_API_KEY")
+    print("[+] Đã nạp khóa API Gemini thành công!")
+except Exception as e:
+    print(f"[-] Lỗi nạp khóa API: {e}. Hệ thống sẽ sử dụng Regex fallback.")
+```
+
+---
+
 ## Bước 3: Cài đặt Môi trường & Dependencies
 
 Dự án đã đóng gói sẵn tập lệnh tự động hóa `colab_run.py` để giúp cài đặt `uv` và toàn bộ các thư viện nghiệp vụ chỉ với một dòng lệnh duy nhất:
 ```bash
 !python colab_run.py --install
 ```
-*Tập lệnh này sẽ cài đặt trình quản lý `uv`, đồng bộ các thư viện từ `pyproject.toml` (bao gồm `torch`, `openai-whisper`, `jiwer`, `soundfile`, `librosa`) trực tiếp vào hệ thống Python của Colab.*
+*Tập lệnh này sẽ cài đặt trình quản lý `uv`, đồng bộ các thư viện từ `pyproject.toml` (bao gồm `torch`, `openai-whisper`, `jiwer`, `soundfile`, `librosa`, `edge-tts`) trực tiếp vào hệ thống Python của Colab.*
 
 ---
 
@@ -53,12 +72,12 @@ Sử dụng GPU của Colab để nhận dạng giọng nói trên 20 file âm t
 
 ### Chạy mô hình Whisper `base` (Nhẹ, tốc độ cực nhanh):
 ```bash
-!python colab_run.py --evaluate
+!uv run python colab_run.py --evaluate
 ```
 
 ### Chạy mô hình Whisper `large-v3` (Mô hình lớn nhất, độ chính xác cao nhất):
 ```bash
-!python colab_run.py --eval-large
+!uv run python colab_run.py --eval-large
 ```
 *Sau khi chạy xong, báo cáo chi tiết WER/CER và thời gian trễ của từng file sẽ được ghi trực tiếp vào tệp tin [docs/asr_evaluation_report.md](file:///c:/Users/Administrator/Developer/Intern_VSF/voice-chatbot-agent/docs/asr_evaluation_report.md).*
 
@@ -68,7 +87,7 @@ Sử dụng GPU của Colab để nhận dạng giọng nói trên 20 file âm t
 
 Để đảm bảo toàn bộ logic database và nghiệp vụ API hoạt động trơn tru:
 ```bash
-!python colab_run.py --test
+!uv run pytest
 ```
 
 ---
@@ -78,9 +97,9 @@ Sử dụng GPU của Colab để nhận dạng giọng nói trên 20 file âm t
 Bạn có thể chạy server backend FastAPI trên Colab và mở cổng kết nối (tunneling) để ứng dụng khác gọi thử nghiệm.
 
 ### 1. Khởi chạy Server
-Tạo một cell mới và chạy lệnh sau (lưu ý: cell này sẽ chạy liên tục để đón nhận request):
+Tạo một cell mới và khởi chạy tiến trình nền (server.log sẽ ghi log hoạt động):
 ```bash
-!python colab_run.py --server
+!uv run python colab_run.py --server > server.log 2>&1 &
 ```
 
 ### 2. Mở cổng kết nối bằng Localtunnel
@@ -92,4 +111,4 @@ Tạo một cell mới song song để mở kết nối public thông qua Localt
 # Expose cổng 8000 ra ngoài
 !lt --port 8000
 ```
-*Colab sẽ trả về một đường link dạng `https://XXXX.localtunnel.me`. Bạn có thể dùng đường link này làm Base URL để thực hiện gửi file âm thanh `/api/v1/chatbot/voice` từ Postman, cURL hoặc ứng dụng Frontend bên ngoài.*
+*Colab sẽ trả về một đường link dạng `https://XXXX.loca.lt`. Bạn có thể dùng đường link này làm Base URL để thực hiện gửi file âm thanh `/api/v1/chatbot/voice` từ Postman, cURL hoặc ứng dụng Frontend bên ngoài.*
