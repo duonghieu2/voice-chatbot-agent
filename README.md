@@ -67,7 +67,11 @@ voice-chatbot-agent/
 This project utilizes the ultra-fast Python package manager **`uv`**. Follow these instructions to setup your local environment:
 
 ### Prerequisites
-Make sure Python 3.10+ is installed on your computer.
+1. **Python 3.10+** must be installed on your computer.
+2. **FFmpeg** must be installed on your system and added to your system's PATH. FFmpeg is a mandatory system dependency required by the Whisper ASR engine to decode and resample different browser audio formats (such as WebM or Ogg from microphone recordings).
+   - **Windows**: Run `winget install Gyan.FFmpeg` in PowerShell (Admin), then restart your terminal.
+   - **macOS**: Run `brew install ffmpeg` using Homebrew.
+   - **Linux (Debian/Ubuntu)**: Run `sudo apt update && sudo apt install ffmpeg`.
 
 ### 1. Synchronize Dependencies
 Sync the virtual environment and install all packages locked in `uv.lock` by running:
