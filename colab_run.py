@@ -85,8 +85,8 @@ def start_server():
     print("    !npm install -g localtunnel")
     print("    !lt --port 8000")
     print("-" * 60)
-    os.environ["USE_MOCK_ASR"] = "False"
-    os.environ["WHISPER_MODEL_NAME"] = "base"
+    os.environ["USE_MOCK_ASR"] = os.environ.get("USE_MOCK_ASR", "False")
+    os.environ["WHISPER_MODEL_NAME"] = os.environ.get("WHISPER_MODEL_NAME", "base")
     run_command("python -m uvicorn app.main:app --host 0.0.0.0 --port 8000")
     print("=" * 60 + "\n")
 
