@@ -82,32 +82,31 @@ class ASRService:
             return "Chào bạn, tôi cần kiểm tra trạng thái đơn hàng"
         else:
             try:
-                import io
-                import soundfile as sf
-                import librosa
-                import numpy as np
+                import tempfile
+                import whisper
                 import torch
                 
-                # Đọc luồng âm thanh từ bộ nhớ sử dụng soundfile
-                audio_data, sr = sf.read(io.BytesIO(audio_content))
+                # Tạo file tạm thời để lưu dữ liệu âm thanh đầu vào
+                # Việc này giúp whisper.load_audio (dùng ffmpeg bên dưới) có thể giải mã mọi định dạng (wav, mp3, webm, ogg...)
+                suffix = os.path.splitext(filename)[1] or ".wav"
+                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+                    tmp_file.write(audio_content)
+                    tmp_path = tmp_file.name
                 
-                # Nếu là âm thanh stereo (2 kênh), chuyển đổi thành mono (1 kênh) bằng cách lấy trung bình
-                if len(audio_data.shape) > 1:
-                    audio_data = np.mean(audio_data, axis=1)
+                try:
+                    # whisper.load_audio tự động gọi ffmpeg để decode và resample về 16000Hz mono float32
+                    audio_data = whisper.load_audio(tmp_path)
                     
-                # Resample sang tần số chuẩn 16000Hz của Whisper
-                if sr != 16000:
-                    audio_data = librosa.resample(audio_data, orig_sr=sr, target_sr=16000)
+                    # Gọi mô hình nhận dạng giọng nói Whisper
+                    model = self._get_model()
+                    fp16 = torch.cuda.is_available()
                     
-                # Chuyển đổi định dạng sang float32
-                audio_data = audio_data.astype(np.float32)
-                
-                # Gọi mô hình nhận dạng giọng nói Whisper
-                model = self._get_model()
-                fp16 = torch.cuda.is_available()
-                
-                result = model.transcribe(audio_data, language="vi", fp16=fp16)
-                return result.get("text", "").strip()
+                    result = model.transcribe(audio_data, language="vi", fp16=fp16)
+                    return result.get("text", "").strip()
+                finally:
+                    # Xóa file tạm sau khi xử lý
+                    if os.path.exists(tmp_path):
+                        os.remove(tmp_path)
                 
             except Exception as e:
                 print(f"Error transcribing audio with Whisper: {str(e)}")
