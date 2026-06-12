@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -28,6 +28,13 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 # 4. Đăng ký các router xử lý kịch bản chatbot và tools gọi dịch vụ mock
 app.include_router(chatbot.router, prefix="/api/v1", tags=["Chatbot"])
 app.include_router(tools.router, prefix="/api/v1", tags=["Tools"])
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    favicon_path = os.path.join(static_dir, "favicon.svg")
+    if os.path.exists(favicon_path):
+        return FileResponse(favicon_path)
+    return Response(status_code=204)
 
 @app.get("/")
 def read_root(request: Request):
