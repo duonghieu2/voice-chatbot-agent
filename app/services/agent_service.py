@@ -286,7 +286,7 @@ class AgentService:
             if tool_called:
                 # 1. Gọi tool check_ride_status (trên backend là tool_service.get_ride_status)
                 if tool_called == "check_ride_status":
-                    ride_id = tool_args.get("ride_id", "R101").upper()
+                    ride_id = str(tool_args.get("ride_id") or "R101").upper()
                     # Cập nhật tool_args để đồng bộ định dạng đầu ra
                     tool_args = {"ride_id": ride_id}
                     res = tool_service.get_ride_status(ride_id)
@@ -297,7 +297,7 @@ class AgentService:
                         
                 # 2. Gọi tool check_order_status (trên backend là tool_service.get_food_order_status)
                 elif tool_called == "check_order_status":
-                    order_id = tool_args.get("order_id", "F202").upper()
+                    order_id = str(tool_args.get("order_id") or "F202").upper()
                     tool_args = {"order_id": order_id}
                     res = tool_service.get_food_order_status(order_id)
                     if res:
@@ -307,7 +307,7 @@ class AgentService:
                         
                 # 3. Gọi tool verify_billing_fees (trên backend là tool_service.check_payment_status)
                 elif tool_called == "verify_billing_fees":
-                    target_id = tool_args.get("target_id", "R103").upper()
+                    target_id = str(tool_args.get("target_id") or "R103").upper()
                     tool_args = {"target_id": target_id}
                     res = tool_service.check_payment_status(target_id)
                     if res:
@@ -331,9 +331,9 @@ class AgentService:
                     
                 # 6. Gọi tool request_refund (hỗ trợ hoàn tiền)
                 elif tool_called == "request_refund":
-                    payment_id = tool_args.get("payment_id", "PAY202").upper()
-                    amount = float(tool_args.get("amount", 35000.0))
-                    reason = tool_args.get("reason", "Yêu cầu hoàn tiền món ăn bị thiếu")
+                    payment_id = str(tool_args.get("payment_id") or "PAY202").upper()
+                    amount = float(tool_args.get("amount") or 35000.0)
+                    reason = tool_args.get("reason") or "Yêu cầu hoàn tiền món ăn bị thiếu"
                     tool_args = {"payment_id": payment_id, "amount": amount, "reason": reason}
                     res = tool_service.request_refund(payment_id, amount, reason)
                     tool_result = res
