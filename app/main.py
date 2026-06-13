@@ -4,12 +4,27 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from app.routers import chatbot, tools
 import os
+from contextlib import asynccontextmanager
 
-# 1. Khởi tạo ứng dụng FastAPI
+# 0. Thiết lập lifespan event handler
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Tải trước (pre-warm) mô hình Whisper khi khởi động server (nếu tắt Mock)"""
+    from app.core.config import settings
+    if not settings.USE_MOCK_ASR:
+        print("[*] Đang tải trước mô hình Whisper ASR vào bộ nhớ khi khởi động server...")
+        from app.services.asr_service import asr_service
+        # Gọi load model
+        asr_service._get_model()
+        print("[*] Mô hình Whisper ASR đã được tải sẵn sàng!")
+    yield
+
+# 1. Khởi tạo ứng dụng FastAPI với lifespan
 app = FastAPI(
     title="Voice Chatbot Agent API",
     description="Backend phục vụ pipeline Voice Chatbot đặt xe và đặt đồ ăn",
-    version="0.1.0"
+    version="0.1.0",
+    lifespan=lifespan
 )
 
 # 2. Cấu hình CORS để đảm bảo Frontend có thể gọi API sau này
@@ -28,7 +43,6 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 # 4. Đăng ký các router xử lý kịch bản chatbot và tools gọi dịch vụ mock
 app.include_router(chatbot.router, prefix="/api/v1", tags=["Chatbot"])
 app.include_router(tools.router, prefix="/api/v1", tags=["Tools"])
-
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
     favicon_path = os.path.join(static_dir, "favicon.svg")
