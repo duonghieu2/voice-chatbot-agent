@@ -4,6 +4,7 @@ import re
 import json
 import logging
 import unicodedata
+import google.generativeai as genai
 from app.core.config import settings
 from app.services.tool_service import tool_service
 from app.database.mock_db import db
@@ -11,6 +12,85 @@ from app.database.mock_db import db
 logger = logging.getLogger(__name__)
 
 class AgentService:
+    def __init__(self):
+        self.decision_model = None
+        self.synthesis_model = None
+        self._initialized = False
+
+    def initialize_models(self) -> None:
+        """
+        Khởi tạo và cấu hình trước các GenerativeModel của Gemini để tránh trễ cuộc gọi đầu tiên.
+        """
+        if self._initialized:
+            return
+        
+        if settings.GEMINI_API_KEY:
+            try:
+                # Khởi tạo và cấu hình API Gemini
+                print("[*] Đang cấu hình và nạp trước mô hình Gemini LLM...")
+                genai.configure(api_key=settings.GEMINI_API_KEY)
+                
+                # Cấu hình instruction cho mô hình phân tích kịch bản
+                system_instruction = (
+                    "Bạn là Agent AI chăm sóc khách hàng của một dịch vụ gọi xe và giao đồ ăn bằng tiếng Việt.\n"
+                    "Nhiệm vụ của bạn là đọc tin nhắn của khách hàng (đã được sửa lỗi chính tả), nhận diện ý định (intent),\n"
+                    "và quyết định xem có cần gọi công cụ (tool) nào để kiểm tra thông tin hay không.\n\n"
+                    "Danh sách các công cụ bạn có thể chọn:\n"
+                    "1. `check_ride_status`: Tra cứu thông tin chuyến xe. Tham số: `ride_id` (định dạng Rxxx, ví dụ R101).\n"
+                    "2. `check_order_status`: Tra cứu thông tin đơn hàng ăn uống. Tham số: `order_id` (định dạng Fxxx, ví dụ F202).\n"
+                    "3. `verify_billing_fees`: Tra cứu thông tin hóa đơn giao dịch/thanh toán. Tham số: `target_id` (Rxxx hoặc Fxxx).\n"
+                    "4. `get_refund_policy`: Lấy chính sách hoàn tiền và phí hủy chuyến. Không có tham số.\n"
+                    "5. `create_support_ticket`: Tạo yêu cầu hỗ trợ (ticket) để chuyển cho nhân sự trực tiếp. "
+                    "Tham số: `user_id` (ví dụ: U001), `category` ('ride_issue', 'food_issue', 'payment_issue', 'other'), `description` (nội dung khiếu nại).\n\n"
+                    "Quy định phân tích kịch bản:\n"
+                    "- Nếu khách hàng hỏi chuyến xe đang ở đâu, tài xế đến trễ: intent='check_ride_status', tool_called='check_ride_status', tham số `ride_id`.\n"
+                    "- Nếu khách hàng hỏi về phí hủy chuyến, tại sao bị trừ tiền phí hủy chuyến xe: intent='check_ride_cancellation_fee', tool_called='check_ride_status', tham số `ride_id`.\n"
+                    "- Nếu khách hàng phản ánh giao thiếu món đồ ăn hoặc đơn đồ ăn giao lâu: intent='check_food_order_status', tool_called='check_order_status', tham số `order_id`.\n"
+                    "- Nếu khách hàng muốn hoàn tiền đơn hàng bị thiếu hoặc chuyến xe không ưng ý: intent='request_refund', tool_called='request_refund', "
+                    "tham số `payment_id` (ví dụ PAY202 hoặc PAY102), `amount` (số tiền hoàn, ví dụ 35000.0 cho món khoai tây chiên bị thiếu), `reason`.\n"
+                    "- Nếu khách hàng gay gắt muốn gặp nhân viên, tổng đài viên, khiếu nại thái độ hoặc gặp sự cố khẩn cấp: intent='escalate_to_support', tool_called='create_support_ticket', "
+                    "tham số `user_id` (mặc định U001), `category`, `description`.\n"
+                    "- Đối với các câu hỏi thăm hỏi thông thường: intent='general_inquiry', tool_called=null, agent_response='câu trả lời lịch sự'.\n\n"
+                    "Đầu ra của bạn BẮT BUỘC phải là một đối tượng JSON duy nhất có dạng:\n"
+                    "{\n"
+                    "  \"intent\": \"<tên intent tương ứng>\",\n"
+                    "  \"tool_called\": \"<tên tool hoặc null>\",\n"
+                    "  \"tool_args\": { ... },\n"
+                    "  \"agent_response\": \"<câu trả lời tiếng Việt trực tiếp nếu không cần gọi tool, ngược lại để null>\"\n"
+                    "}"
+                )
+                
+                # Cấu hình instruction cho mô hình tổng hợp câu trả lời tự nhiên
+                synthesis_instruction = (
+                    "Bạn là Agent AI chăm sóc khách hàng của dịch vụ gọi xe và giao đồ ăn bằng tiếng Việt.\n"
+                    "Bạn vừa thực thi công cụ hỗ trợ và nhận được kết quả dữ liệu từ hệ thống Mock DB như sau.\n\n"
+                    "Yêu cầu phản hồi:\n"
+                    "1. Hãy trả lời khách hàng một cách lịch sự, thân thiện, đồng cảm và ngắn gọn.\n"
+                    "2. Bạn BẮT BUỘC phải trích xuất và đưa đầy đủ thông tin hữu ích từ kết quả hệ thống vào câu trả lời để kiểm thử chính xác:\n"
+                    "   - Chuyến xe: Tên tài xế (ví dụ: Lê Văn C), biển số xe (ví dụ: 29A-12345), thời gian ETA (ví dụ: 5 phút), trạng thái (arriving).\n"
+                    "   - Đơn đồ ăn: Tên quán (Burger King - Bà Triệu), món giao thiếu (Khoai tây chiên cỡ lớn).\n"
+                    "   - Phí hủy chuyến: Phí phạt hủy chuyến xe (10.000 VND), lý do phạt.\n"
+                    "   - Hoàn tiền: Mã giao dịch (PAY202), số tiền hoàn (35,000 VND hoặc 35.000 VND), thời gian xử lý 1-3 ngày.\n"
+                    "   - Phiếu hỗ trợ: Tạo thành công ticket, mã số ticket (ví dụ: TKT801), cam kết hỗ trợ.\n\n"
+                    "Hãy trả về kết quả dưới dạng JSON duy nhất:\n"
+                    "{\n"
+                    "  \"agent_response\": \"<câu trả lời tiếng Việt tự nhiên của bạn>\"\n"
+                    "}"
+                )
+
+                self.decision_model = genai.GenerativeModel(
+                    model_name=settings.LLM_MODEL_NAME,
+                    system_instruction=system_instruction
+                )
+                
+                self.synthesis_model = genai.GenerativeModel(
+                    model_name=settings.LLM_MODEL_NAME,
+                    system_instruction=synthesis_instruction
+                )
+                self._initialized = True
+                print("[*] Đã khởi tạo thành công các mô hình Gemini!")
+            except Exception as e:
+                print(f"[!] Cảnh báo: Lỗi khi khởi tạo các mô hình Gemini: {str(e)}")
     @staticmethod
     def strip_accents(text: str) -> str:
         """
@@ -210,8 +290,7 @@ class AgentService:
             "agent_response": agent_response
         }
 
-    @staticmethod
-    def process_transcript(transcript: str, user_id: str = "U001") -> Dict[str, Any]:
+    def process_transcript(self, transcript: str, user_id: str = "U001") -> Dict[str, Any]:
         """
         Nhập transcript văn bản, chạy tiền xử lý sửa lỗi ASR, và gọi Gemini LLM Agent
         để phân tích nghiệp vụ, gọi mock tools và tổng hợp câu trả lời tự nhiên.
@@ -225,46 +304,11 @@ class AgentService:
             return AgentService.process_transcript_regex(normalized_transcript, user_id)
         
         try:
-            import google.generativeai as genai
-            
-            # Khởi tạo và cấu hình API Gemini
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            
-            # Thiết lập system instruction cho LLM
-            system_instruction = (
-                "Bạn là Agent AI chăm sóc khách hàng của một dịch vụ gọi xe và giao đồ ăn bằng tiếng Việt.\n"
-                "Nhiệm vụ của bạn là đọc tin nhắn của khách hàng (đã được sửa lỗi chính tả), nhận diện ý định (intent),\n"
-                "và quyết định xem có cần gọi công cụ (tool) nào để kiểm tra thông tin hay không.\n\n"
-                "Danh sách các công cụ bạn có thể chọn:\n"
-                "1. `check_ride_status`: Tra cứu thông tin chuyến xe. Tham số: `ride_id` (định dạng Rxxx, ví dụ R101).\n"
-                "2. `check_order_status`: Tra cứu thông tin đơn hàng ăn uống. Tham số: `order_id` (định dạng Fxxx, ví dụ F202).\n"
-                "3. `verify_billing_fees`: Tra cứu thông tin hóa đơn giao dịch/thanh toán. Tham số: `target_id` (Rxxx hoặc Fxxx).\n"
-                "4. `get_refund_policy`: Lấy chính sách hoàn tiền và phí hủy chuyến. Không có tham số.\n"
-                "5. `create_support_ticket`: Tạo yêu cầu hỗ trợ (ticket) để chuyển cho nhân sự trực tiếp. "
-                "Tham số: `user_id` (ví dụ: U001), `category` ('ride_issue', 'food_issue', 'payment_issue', 'other'), `description` (nội dung khiếu nại).\n\n"
-                "Quy định phân tích kịch bản:\n"
-                "- Nếu khách hàng hỏi chuyến xe đang ở đâu, tài xế đến trễ: intent='check_ride_status', tool_called='check_ride_status', tham số `ride_id`.\n"
-                "- Nếu khách hàng hỏi về phí hủy chuyến, tại sao bị trừ tiền phí hủy chuyến xe: intent='check_ride_cancellation_fee', tool_called='check_ride_status', tham số `ride_id`.\n"
-                "- Nếu khách hàng phản ánh giao thiếu món đồ ăn hoặc đơn đồ ăn giao lâu: intent='check_food_order_status', tool_called='check_order_status', tham số `order_id`.\n"
-                "- Nếu khách hàng muốn hoàn tiền đơn hàng bị thiếu hoặc chuyến xe không ưng ý: intent='request_refund', tool_called='request_refund', "
-                "tham số `payment_id` (ví dụ PAY202 hoặc PAY102), `amount` (số tiền hoàn, ví dụ 35000.0 cho món khoai tây chiên bị thiếu), `reason`.\n"
-                "- Nếu khách hàng gay gắt muốn gặp nhân viên, tổng đài viên, khiếu nại thái độ hoặc gặp sự cố khẩn cấp: intent='escalate_to_support', tool_called='create_support_ticket', "
-                "tham số `user_id` (mặc định U001), `category`, `description`.\n"
-                "- Đối với các câu hỏi thăm hỏi thông thường: intent='general_inquiry', tool_called=null, agent_response='câu trả lời lịch sự'.\n\n"
-                "Đầu ra của bạn BẮT BUỘC phải là một đối tượng JSON duy nhất có dạng:\n"
-                "{\n"
-                "  \"intent\": \"<tên intent tương ứng>\",\n"
-                "  \"tool_called\": \"<tên tool hoặc null>\",\n"
-                "  \"tool_args\": { ... },\n"
-                "  \"agent_response\": \"<câu trả lời tiếng Việt trực tiếp nếu không cần gọi tool, ngược lại để null>\"\n"
-                "}"
-            )
-            
-            # Gọi mô hình Gemini để đưa ra quyết định
-            model = genai.GenerativeModel(
-                model_name=settings.LLM_MODEL_NAME,
-                system_instruction=system_instruction
-            )
+            # Đảm bảo model đã được khởi tạo và cấu hình
+            self.initialize_models()
+            model = self.decision_model
+            if model is None:
+                raise ValueError("Mô hình Gemini chưa được khởi tạo. Hãy cấu hình GEMINI_API_KEY.")
             
             prompt = f"Transcript khách hàng: \"{normalized_transcript}\"\nUser ID hiện tại: {user_id}"
             
@@ -352,24 +396,6 @@ class AgentService:
                 if intent == "check_ride_cancellation_fee":
                     final_tool_called = "get_ride_status"
                 
-                # Gọi Gemini lần thứ 2 để tổng hợp câu trả lời tự nhiên từ kết quả của tool
-                synthesis_instruction = (
-                    "Bạn là Agent AI chăm sóc khách hàng của dịch vụ gọi xe và giao đồ ăn bằng tiếng Việt.\n"
-                    "Bạn vừa thực thi công cụ hỗ trợ và nhận được kết quả dữ liệu từ hệ thống Mock DB như sau.\n\n"
-                    "Yêu cầu phản hồi:\n"
-                    "1. Hãy trả lời khách hàng một cách lịch sự, thân thiện, đồng cảm và ngắn gọn.\n"
-                    "2. Bạn BẮT BUỘC phải trích xuất và đưa đầy đủ thông tin hữu ích từ kết quả hệ thống vào câu trả lời để kiểm thử chính xác:\n"
-                    "   - Chuyến xe: Tên tài xế (ví dụ: Lê Văn C), biển số xe (ví dụ: 29A-12345), thời gian ETA (ví dụ: 5 phút), trạng thái (arriving).\n"
-                    "   - Đơn đồ ăn: Tên quán (Burger King - Bà Triệu), món giao thiếu (Khoai tây chiên cỡ lớn).\n"
-                    "   - Phí hủy chuyến: Phí phạt hủy chuyến xe (10.000 VND), lý do phạt.\n"
-                    "   - Hoàn tiền: Mã giao dịch (PAY202), số tiền hoàn (35,000 VND hoặc 35.000 VND), thời gian xử lý 1-3 ngày.\n"
-                    "   - Phiếu hỗ trợ: Tạo thành công ticket, mã số ticket (ví dụ: TKT801), cam kết hỗ trợ.\n\n"
-                    "Hãy trả về kết quả dưới dạng JSON duy nhất:\n"
-                    "{\n"
-                    "  \"agent_response\": \"<câu trả lời tiếng Việt tự nhiên của bạn>\"\n"
-                    "}"
-                )
-                
                 synthesis_prompt = (
                     f"Transcript ban đầu của khách hàng: \"{normalized_transcript}\"\n"
                     f"Công cụ đã chạy: {tool_called}\n"
@@ -377,10 +403,10 @@ class AgentService:
                     f"Kết quả trả về từ DB: {json.dumps(tool_result, ensure_ascii=False)}"
                 )
                 
-                synth_model = genai.GenerativeModel(
-                    model_name=settings.LLM_MODEL_NAME,
-                    system_instruction=synthesis_instruction
-                )
+                # Sử dụng mô hình tổng hợp đã được cấu hình trước
+                synth_model = self.synthesis_model
+                if synth_model is None:
+                    raise ValueError("Mô hình Gemini Synthesis chưa được khởi tạo.")
                 
                 synth_response = synth_model.generate_content(
                     synthesis_prompt,

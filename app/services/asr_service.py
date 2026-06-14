@@ -25,10 +25,22 @@ class ASRService:
         if self.model is None:
             import whisper
             import torch
+            import numpy as np
             from app.core.config import settings
             device = "cuda" if torch.cuda.is_available() else "cpu"
             print(f"Loading Whisper model '{settings.WHISPER_MODEL_NAME}' on {device}...")
             self.model = whisper.load_model(settings.WHISPER_MODEL_NAME, device=device)
+            
+            # Chạy thử (warm-up) inference để nạp CUDA kernels và cấp phát VRAM trước
+            try:
+                print("[*] Đang thực hiện warm-up inference cho Whisper...")
+                # Tạo 1 giây âm thanh câm (16000 samples ở tần số 16kHz mono)
+                dummy_audio = np.zeros(16000, dtype=np.float32)
+                fp16 = torch.cuda.is_available()
+                self.model.transcribe(dummy_audio, fp16=fp16)
+                print("[*] Hoàn thành warm-up inference cho Whisper thành công!")
+            except Exception as e:
+                print(f"[!] Cảnh báo: Lỗi khi chạy warm-up Whisper: {str(e)}")
         return self.model
 
     def transcribe(self, audio_content: bytes, filename: str) -> str:

@@ -9,14 +9,24 @@ from contextlib import asynccontextmanager
 # 0. Thiết lập lifespan event handler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Tải trước (pre-warm) mô hình Whisper khi khởi động server (nếu tắt Mock)"""
+    """Tải trước (pre-warm) mô hình Whisper và Gemini LLM khi khởi động server"""
     from app.core.config import settings
+    
+    # 1. Tải trước và warm-up mô hình Whisper ASR (nếu tắt Mock)
     if not settings.USE_MOCK_ASR:
         print("[*] Đang tải trước mô hình Whisper ASR vào bộ nhớ khi khởi động server...")
         from app.services.asr_service import asr_service
-        # Gọi load model
+        # Gọi load model (có tích hợp sẵn warm-up inference bên trong)
         asr_service._get_model()
         print("[*] Mô hình Whisper ASR đã được tải sẵn sàng!")
+        
+    # 2. Khởi tạo và cấu hình trước các mô hình Gemini LLM
+    if settings.GEMINI_API_KEY:
+        print("[*] Đang khởi tạo trước cấu hình Gemini LLM...")
+        from app.services.agent_service import agent_service
+        agent_service.initialize_models()
+        print("[*] Mô hình Gemini LLM đã sẵn sàng!")
+        
     yield
 
 # 1. Khởi tạo ứng dụng FastAPI với lifespan
