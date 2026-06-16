@@ -52,7 +52,7 @@ def install_dependencies():
     print("[+] Installation complete!")
     print("=" * 60 + "\n")
 
-def run_asr_evaluation(model_name="base"):
+def run_asr_evaluation(model_name="small"):
     print("=" * 60)
     print(f"RUNNING ASR EVALUATION (Model: {model_name})")
     print("=" * 60)
@@ -86,7 +86,7 @@ def start_server():
     print("    !lt --port 8000")
     print("-" * 60)
     os.environ["USE_MOCK_ASR"] = os.environ.get("USE_MOCK_ASR", "False")
-    os.environ["WHISPER_MODEL_NAME"] = os.environ.get("WHISPER_MODEL_NAME", "base")
+    os.environ["WHISPER_MODEL_NAME"] = os.environ.get("WHISPER_MODEL_NAME", "small")
     run_command("python -m uvicorn app.main:app --host 0.0.0.0 --port 8000")
     print("=" * 60 + "\n")
 
@@ -94,7 +94,8 @@ def main():
     print("Google Colab Helper Script for Voice Chatbot Agent")
     print("Usage:")
     print("  python colab_run.py --install     # Install all dependencies")
-    print("  python colab_run.py --evaluate    # Run Whisper ASR evaluation (defaults to 'base' model)")
+    print("  python colab_run.py --evaluate    # Run Whisper ASR evaluation (defaults to 'small' model)")
+    print("  python colab_run.py --eval-base   # Run evaluation with 'base' model")
     print("  python colab_run.py --eval-large  # Run evaluation with 'large-v3' model (requires GPU)")
     print("  python colab_run.py --test        # Run pytest unit tests")
     print("  python colab_run.py --server      # Start FastAPI backend server")
@@ -111,6 +112,8 @@ def main():
         check_gpu()
         install_dependencies()
     elif arg == "--evaluate":
+        run_asr_evaluation("small")
+    elif arg == "--eval-base":
         run_asr_evaluation("base")
     elif arg == "--eval-large":
         run_asr_evaluation("large-v3")

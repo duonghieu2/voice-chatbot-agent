@@ -7,7 +7,10 @@ import edge_tts
 router = APIRouter()
 
 @router.post("/chatbot/voice")
-async def handle_voice_input(file: UploadFile = File(...)):
+async def handle_voice_input(
+    file: UploadFile = File(...),
+    language: str = "vi"
+):
     """
     Endpoint tiếp nhận file âm thanh từ người dùng, đưa vào pipeline xử lý end-to-end:
     Audio Input -> ASR (Transcription) -> Chatbot LLM Agent (Reasoning & Tool Calling) -> Response
@@ -16,8 +19,8 @@ async def handle_voice_input(file: UploadFile = File(...)):
         # Đọc nội dung tệp âm thanh
         audio_content = await file.read()
         
-        # 1. Chuyển đổi âm thanh thành văn bản
-        transcript = asr_service.transcribe(audio_content, file.filename)
+        # 1. Chuyển đổi âm thanh thành văn bản với tùy chọn ngôn ngữ
+        transcript = asr_service.transcribe(audio_content, file.filename, language)
         
         # 2. Xử lý kịch bản nghiệp vụ bằng Agent
         agent_result = agent_service.process_transcript(transcript)

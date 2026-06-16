@@ -12,8 +12,8 @@ async def generate_speech(text: str, voice: str, output_path: str):
         print(f"Error generating {os.path.basename(output_path)}: {e}")
 
 async def main():
-    prompts_path = r"c:\Users\Administrator\Developer\Intern_VSF\voice-chatbot-agent\app\database\prompts.json"
-    output_dir = r"c:\Users\Administrator\Developer\Intern_VSF\voice-chatbot-agent\tests\audio_samples"
+    prompts_path = r"c:\Users\Administrator\Developer\Intern_VSF\voice-chatbot-agent-demo\app\database\prompts.json"
+    output_dir = r"c:\Users\Administrator\Developer\Intern_VSF\voice-chatbot-agent-demo\tests\audio_samples"
     
     os.makedirs(output_dir, exist_ok=True)
     
@@ -24,11 +24,9 @@ async def main():
     with open(prompts_path, "r", encoding="utf-8") as f:
         prompts = json.load(f)
         
-    # Giọng đọc đa ngôn ngữ (Multilingual Neural Voices) của Microsoft Edge TTS
-    # en-US-AvaMultilingualNeural (Giọng Nữ)
-    # en-US-AndrewMultilingualNeural (Giọng Nam)
-    female_voice = "en-US-AvaMultilingualNeural"
-    male_voice = "en-US-AndrewMultilingualNeural"
+    # Giọng đọc chuẩn tiếng Việt của Microsoft Edge TTS
+    female_voice = "vi-VN-HoaiMyNeural"
+    male_voice = "vi-VN-NamMinhNeural"
     
     tasks = []
     print(f"Starting synthesis of {len(prompts)} audio files using Multilingual voices...")

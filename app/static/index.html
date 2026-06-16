@@ -41,6 +41,19 @@
                     <h2><i class="fa-solid fa-gears"></i> Bộ Điều Khiển Đầu Vào</h2>
                 </div>
 
+                <!-- ASR Language Configuration -->
+                <div class="card config-card" style="padding: 15px; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 14px; display: flex; align-items: center; gap: 8px; color: var(--text-color);"><i class="fa-solid fa-language icon-gradient"></i> Cấu HÌnh Ngôn Ngữ ASR</h3>
+                    <div class="control-row" style="display: flex; gap: 10px; align-items: center; justify-content: space-between;">
+                        <label for="asr-lang-select" style="font-size: 13px; opacity: 0.8; flex-shrink: 0; color: #fff;">Ngôn ngữ nhận dạng:</label>
+                        <select id="asr-lang-select" style="flex-grow: 1; max-width: 180px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 6px; padding: 6px 10px; font-size: 13px; font-family: inherit; cursor: pointer; outline: none; transition: all 0.3s ease;">
+                            <option value="vi">Tiếng Việt (vi)</option>
+                            <option value="en">Tiếng Anh (en)</option>
+                            <option value="auto">Song ngữ / Tự động (auto)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Live Audio Capture / Recording -->
                 <div class="card voice-capture-card">
                     <h3>Ghi Âm Trực Tiếp</h3>

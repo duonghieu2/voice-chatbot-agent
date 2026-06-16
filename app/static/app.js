@@ -402,8 +402,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('file', currentFile);
 
+            // Lấy ngôn ngữ nhận dạng ASR đã chọn
+            const asrLangSelect = document.getElementById('asr-lang-select');
+            const selectedLang = asrLangSelect ? asrLangSelect.value : 'vi';
+
             const startRequestTime = Date.now();
-            const response = await fetch(`${API_URL}/chatbot/voice`, {
+            const response = await fetch(`${API_URL}/chatbot/voice?language=${selectedLang}`, {
                 method: 'POST',
                 body: formData
             });

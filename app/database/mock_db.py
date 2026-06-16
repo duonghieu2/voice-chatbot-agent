@@ -41,7 +41,7 @@ class MockDatabase:
         # Không ghi xuống đĩa nếu đang chạy trong môi trường test, script đánh giá hoặc luồng tĩnh
         import sys
         main_script = os.path.basename(sys.argv[0]) if sys.argv else ""
-        if "pytest" in sys.modules or "evaluate_asr.py" in main_script or "test_static_flow.py" in main_script:
+        if "pytest" in sys.modules or "evaluate_asr.py" in main_script or "test_static_flow.py" in main_script or "test_end_to_end.py" in main_script:
             return
             
         try:

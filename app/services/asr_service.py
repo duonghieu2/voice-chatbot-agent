@@ -43,7 +43,7 @@ class ASRService:
                 print(f"[!] Cảnh báo: Lỗi khi chạy warm-up Whisper: {str(e)}")
         return self.model
 
-    def transcribe(self, audio_content: bytes, filename: str) -> str:
+    def transcribe(self, audio_content: bytes, filename: str, language: str = "vi") -> str:
         """
         Chuyển đổi âm thanh đầu vào thành văn bản (ASR).
         Hỗ trợ 2 chế độ: giả lập (mock) và chạy mô hình thực tế (Whisper).
@@ -113,7 +113,10 @@ class ASRService:
                     model = self._get_model()
                     fp16 = torch.cuda.is_available()
                     
-                    result = model.transcribe(audio_data, language="vi", fp16=fp16)
+                    # Nếu language là "auto" hoặc song ngữ, truyền None để Whisper tự động phát hiện ngôn ngữ
+                    lang_param = None if (not language or language.lower() in ["auto", "song ngữ", "song ngu"]) else language.lower()
+                    
+                    result = model.transcribe(audio_data, language=lang_param, fp16=fp16)
                     return result.get("text", "").strip()
                 finally:
                     # Xóa file tạm sau khi xử lý

@@ -4,7 +4,7 @@ Welcome to the **Voice Chatbot Agent** project, a premium end-to-end prototype d
 
 This codebase integrates a complete **E2E Voice Pipeline**:
 1. **Audio Input**: Live microphone recording or file upload via a premium Web UI.
-2. **ASR (Speech-to-Text)**: Local Whisper Tiny/Large inference with Vietnamese accent and error normalization.
+2. **ASR (Speech-to-Text)**: Local Whisper Tiny/Small/Large inference with Vietnamese accent and error normalization.
 3. **LLM Chatbot Agent & Tool Calling**: Gemini 3.1 Flash-Lite with 2-Stage native tool calling.
 4. **Backend Mock Database**: In-memory database with state isolation.
 5. **Text-to-Speech (TTS)**: Server-side Microsoft Edge TTS with high-quality neural voices.
@@ -86,7 +86,7 @@ Create a local `.env` file in the root directory:
 GEMINI_API_KEY=your_gemini_api_key_here
 LLM_MODEL_NAME=gemini-3.1-flash-lite
 USE_MOCK_ASR=False
-WHISPER_MODEL_NAME=base
+WHISPER_MODEL_NAME=small
 ```
 *Note: If `GEMINI_API_KEY` is missing or when running automated unit tests, the system automatically falls back to an offline rule-based regex engine to prevent API billing and allow offline development.*
 

@@ -70,14 +70,19 @@ Dự án đã đóng gói sẵn tập lệnh tự động hóa `colab_run.py` đ
 
 Sử dụng GPU của Colab để nhận dạng giọng nói trên 20 file âm thanh mẫu và tính toán chỉ số lỗi.
 
-### Chạy mô hình Whisper `base` (Nhẹ, tốc độ cực nhanh):
+### Chạy mô hình Whisper `small` (Tối ưu nhất về độ chính xác và tốc độ, mặc định):
 ```bash
-!uv run python colab_run.py --evaluate
+!python colab_run.py --evaluate
 ```
 
-### Chạy mô hình Whisper `large-v3` (Mô hình lớn nhất, độ chính xác cao nhất):
+### Chạy mô hình Whisper `base` (Nhẹ hơn, độ chính xác khá):
 ```bash
-!uv run python colab_run.py --eval-large
+!python colab_run.py --eval-base
+```
+
+### Chạy mô hình Whisper `large-v3` (Mô hình lớn nhất, độ chính xác cao nhất, cần GPU VRAM lớn):
+```bash
+!python colab_run.py --eval-large
 ```
 *Sau khi chạy xong, báo cáo chi tiết WER/CER và thời gian trễ của từng file sẽ được ghi trực tiếp vào tệp tin [docs/asr_evaluation_report.md](file:///c:/Users/Administrator/Developer/Intern_VSF/voice-chatbot-agent/docs/asr_evaluation_report.md).*
 
@@ -87,7 +92,7 @@ Sử dụng GPU của Colab để nhận dạng giọng nói trên 20 file âm t
 
 Để đảm bảo toàn bộ logic database và nghiệp vụ API hoạt động trơn tru:
 ```bash
-!uv run pytest
+!python colab_run.py --test
 ```
 
 ---
@@ -99,7 +104,7 @@ Bạn có thể chạy server backend FastAPI trên Colab và mở cổng kết 
 ### 1. Khởi chạy Server
 Tạo một cell mới và khởi chạy tiến trình nền (server.log sẽ ghi log hoạt động):
 ```bash
-!uv run python colab_run.py --server > server.log 2>&1 &
+!python colab_run.py --server > server.log 2>&1 &
 ```
 
 ### 2. Mở cổng kết nối bằng Localtunnel
