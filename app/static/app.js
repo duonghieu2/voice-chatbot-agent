@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let recordTimerInterval = null;
     let recordStartTime = null;
     let currentTtsAudio = null;
+    let recordedDuration = 0;
+    let currentAudioDuration = 0;
 
     // DOM Elements
     const recordBtn = document.getElementById('record-btn');
@@ -30,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pipeline Step Elements
     const stepAudio = document.getElementById('step-audio');
     const stepAudioDetails = document.getElementById('step-audio-details');
+    const audioMetaInfo = document.getElementById('audio-meta-info');
     const stepAudioBadge = document.getElementById('audio-type-badge');
     
     const stepAsr = document.getElementById('step-asr');
@@ -131,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Step 1 Status
         stepAudioBadge.textContent = 'Mẫu có sẵn';
         stepAudioBadge.className = 'step-badge badge-whisper';
-        stepAudioDetails.innerHTML = `
+        audioMetaInfo.innerHTML = `
             <p style="margin-bottom: 8px;"><strong>Đã chọn mẫu:</strong> ${sample.id} - ${sample.category}</p>
             <p style="margin-bottom: 8px; color: var(--text-secondary); font-style: italic;">"${sample.text}"</p>
         `;
@@ -147,9 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
             currentFile = new File([blob], fileName, { type: 'audio/mpeg' });
             
             // Set up player
+            recordedDuration = 0; // Reset for sample files
             audioPlayer.src = audioUrl;
             audioPlayerContainer.classList.remove('hidden');
-            stepAudioDetails.appendChild(audioPlayerContainer);
             
             runPipelineBtn.removeAttribute('disabled');
             showToast('Nạp tệp âm thanh mẫu thành công!', 'success');
@@ -160,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error(err);
             showToast('Tệp âm thanh mẫu chưa được cấu hình trên hệ thống!', 'error');
-            stepAudioDetails.innerHTML += `<p style="color: var(--danger); font-size: 12px; margin-top: 4px;"><i class="fa-solid fa-circle-exclamation"></i> Lỗi: Không thể chạy trình phát âm thanh do thiếu file sample trên server.</p>`;
+            audioMetaInfo.innerHTML += `<p style="color: var(--danger); font-size: 12px; margin-top: 4px;"><i class="fa-solid fa-circle-exclamation"></i> Lỗi: Không thể chạy trình phát âm thanh do thiếu file sample trên server.</p>`;
             // We still allow running since backend can fallback transcribe, but player is disabled
             currentFile = null;
             runPipelineBtn.setAttribute('disabled', 'true');
@@ -204,6 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const recordedFileName = `recorded_voice_${Date.now()}.${extension}`;
                 currentFile = new File([audioBlob], recordedFileName, { type: audioBlob.type });
                 
+                // Track recording duration
+                recordedDuration = (Date.now() - recordStartTime) / 1000;
+                
                 // Set up player
                 const audioUrl = URL.createObjectURL(audioBlob);
                 audioPlayer.src = audioUrl;
@@ -211,11 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 stepAudioBadge.textContent = 'Ghi âm trực tiếp';
                 stepAudioBadge.className = 'step-badge badge-db';
-                stepAudioDetails.innerHTML = `
+                audioMetaInfo.innerHTML = `
                     <p style="margin-bottom: 8px;"><strong>Giọng nói ghi trực tiếp:</strong> ${recordedFileName}</p>
                     <p style="margin-bottom: 8px; color: var(--text-muted); font-size: 11px;">Dung lượng: ${(audioBlob.size / 1024).toFixed(1)} KB</p>
                 `;
-                stepAudioDetails.appendChild(audioPlayerContainer);
                 
                 // Highlight Step 1 as success
                 resetPipelineVisuals();
@@ -319,15 +324,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Step 1 Status
         stepAudioBadge.textContent = 'Tệp tải lên';
         stepAudioBadge.className = 'step-badge badge-db';
-        stepAudioDetails.innerHTML = `
+        audioMetaInfo.innerHTML = `
             <p style="margin-bottom: 8px;"><strong>Tệp âm thanh:</strong> ${file.name}</p>
             <p style="margin-bottom: 8px; color: var(--text-muted); font-size: 11px;">Dung lượng: ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
         `;
 
+        recordedDuration = 0; // Reset for uploaded files
         const audioUrl = URL.createObjectURL(file);
         audioPlayer.src = audioUrl;
         audioPlayerContainer.classList.remove('hidden');
-        stepAudioDetails.appendChild(audioPlayerContainer);
 
         // Highlight Step 1 as success
         resetPipelineVisuals();
@@ -351,6 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
         runPipelineBtn.setAttribute('disabled', 'true');
         audioPlayerContainer.classList.add('hidden');
         audioPlayer.src = '';
+        audioMetaInfo.innerHTML = '<p class="placeholder-text">Chưa nhận được âm thanh đầu vào.</p>';
+        recordedDuration = 0;
+        currentAudioDuration = 0;
         document.querySelectorAll('.sample-item').forEach(el => el.classList.remove('selected'));
     }
 
@@ -587,6 +595,81 @@ document.addEventListener('DOMContentLoaded', () => {
             renderSamples(btn.dataset.filter);
         });
     });
+
+    // Custom Audio Player Listeners
+    const playerPlayBtn = document.getElementById('player-play-btn');
+    const playerMuteBtn = document.getElementById('player-mute-btn');
+    const playerTimelineContainer = document.querySelector('.player-timeline-container');
+    const playerProgress = document.getElementById('player-progress');
+    const playerTime = document.getElementById('player-time');
+
+    playerPlayBtn.addEventListener('click', () => {
+        if (audioPlayer.paused) {
+            audioPlayer.play().catch(err => {
+                console.error("Playback error:", err);
+                showToast("Không thể phát âm thanh này!", "error");
+            });
+        } else {
+            audioPlayer.pause();
+        }
+    });
+
+    playerMuteBtn.addEventListener('click', () => {
+        audioPlayer.muted = !audioPlayer.muted;
+        playerMuteBtn.innerHTML = audioPlayer.muted ? 
+            '<i class="fa-solid fa-volume-xmark"></i>' : 
+            '<i class="fa-solid fa-volume-high"></i>';
+    });
+
+    audioPlayer.addEventListener('play', () => {
+        playerPlayBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    });
+
+    audioPlayer.addEventListener('pause', () => {
+        playerPlayBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+    });
+
+    audioPlayer.addEventListener('ended', () => {
+        playerPlayBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+        playerProgress.style.width = '0%';
+    });
+
+    audioPlayer.addEventListener('timeupdate', () => {
+        const current = audioPlayer.currentTime;
+        const duration = currentAudioDuration || audioPlayer.duration || 0;
+        const percent = (isFinite(duration) && duration > 0) ? (current / duration) * 100 : 0;
+        playerProgress.style.width = `${percent}%`;
+        playerTime.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+    });
+
+    audioPlayer.addEventListener('loadedmetadata', () => {
+        const duration = audioPlayer.duration;
+        if (isFinite(duration) && duration > 0) {
+            currentAudioDuration = duration;
+        } else if (recordedDuration > 0) {
+            currentAudioDuration = recordedDuration;
+        } else {
+            currentAudioDuration = 0;
+        }
+        playerTime.textContent = `00:00 / ${formatTime(currentAudioDuration)}`;
+    });
+
+    playerTimelineContainer.addEventListener('click', (e) => {
+        const rect = playerTimelineContainer.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        const duration = currentAudioDuration || audioPlayer.duration || 0;
+        if (width > 0 && duration > 0 && isFinite(duration)) {
+            audioPlayer.currentTime = (clickX / width) * duration;
+        }
+    });
+
+    function formatTime(secs) {
+        if (isNaN(secs)) return '00:00';
+        const m = String(Math.floor(secs / 60)).padStart(2, '0');
+        const s = String(Math.floor(secs % 60)).padStart(2, '0');
+        return `${m}:${s}`;
+    }
 
     // Initialize list of voices
     populateVoiceList();

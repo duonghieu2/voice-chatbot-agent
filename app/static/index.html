@@ -11,7 +11,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=3.0">
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
 </head>
@@ -42,11 +42,11 @@
                 </div>
 
                 <!-- ASR Language Configuration -->
-                <div class="card config-card" style="padding: 15px; margin-bottom: 20px;">
-                    <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 14px; display: flex; align-items: center; gap: 8px; color: var(--text-color);"><i class="fa-solid fa-language icon-gradient"></i> Cấu HÌnh Ngôn Ngữ ASR</h3>
-                    <div class="control-row" style="display: flex; gap: 10px; align-items: center; justify-content: space-between;">
-                        <label for="asr-lang-select" style="font-size: 13px; opacity: 0.8; flex-shrink: 0; color: #fff;">Ngôn ngữ nhận dạng:</label>
-                        <select id="asr-lang-select" style="flex-grow: 1; max-width: 180px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 6px; padding: 6px 10px; font-size: 13px; font-family: inherit; cursor: pointer; outline: none; transition: all 0.3s ease;">
+                <div class="card config-card">
+                    <h3><i class="fa-solid fa-language icon-gradient"></i> Cấu hình Ngôn Ngữ ASR</h3>
+                    <div class="control-row">
+                        <label for="asr-lang-select">Ngôn ngữ nhận dạng:</label>
+                        <select id="asr-lang-select">
                             <option value="vi">Tiếng Việt (vi)</option>
                             <option value="en">Tiếng Anh (en)</option>
                             <option value="auto">Song ngữ / Tự động (auto)</option>
@@ -129,9 +129,23 @@
                                 <span class="step-badge" id="audio-type-badge">Chưa nạp</span>
                             </div>
                             <div class="step-details" id="step-audio-details">
-                                <p class="placeholder-text">Chưa nhận được âm thanh đầu vào.</p>
-                                <div id="audio-player-container" class="hidden">
-                                    <audio id="audio-player" controls></audio>
+                                <div id="audio-meta-info">
+                                    <p class="placeholder-text">Chưa nhận được âm thanh đầu vào.</p>
+                                </div>
+                                <div id="audio-player-container" class="hidden custom-audio-player">
+                                    <audio id="audio-player"></audio>
+                                    <button id="player-play-btn" class="player-btn" type="button">
+                                        <i class="fa-solid fa-play"></i>
+                                    </button>
+                                    <div class="player-timeline-container">
+                                        <div id="player-timeline" class="player-timeline">
+                                            <div id="player-progress" class="player-progress"></div>
+                                        </div>
+                                    </div>
+                                    <span id="player-time" class="player-time">00:00 / 00:00</span>
+                                    <button id="player-mute-btn" class="player-btn" type="button">
+                                        <i class="fa-solid fa-volume-high"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -210,6 +224,6 @@
     <!-- Floating status alerts -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js?v=3.0"></script>
 </body>
 </html>
