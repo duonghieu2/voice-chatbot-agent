@@ -215,6 +215,9 @@ def run_evaluation():
         print(f"  WER: {wer:.2%} | CER: {cer:.2%} | Latency: {latency:.2f}s")
         print(f"  Intent Target   : {expected_intent} -> Detected: {detected_intent} [{'MATCH' if intent_ok else 'FAILED'}]")
         print(f"  Tool Target     : {expected_tool} -> Detected: {detected_tool} [{'MATCH' if tool_ok else 'FAILED'}]")
+        expected_entity_str = ", ".join([f"{k}={v}" for k, v in expected_entities.items()]) if expected_entities else "None"
+        detected_entity_str = ", ".join([f"{k}={detected_args.get(k, '')}" for k in expected_entities]) if expected_entities else "None"
+        print(f"  Entity Target   : {expected_entity_str} -> Detected: {detected_entity_str} [{'MATCH' if entity_ok else 'FAILED'}]")
         if is_escalation_sample:
             print(f"  Escalation Check: [{'MATCH' if escalation_ok else 'FAILED'}]")
         print(f"  Hallucination   : [{'YES' if hallucination_detected else 'NO'}]")

@@ -115,7 +115,19 @@ class AgentService:
         # Chuyển về chữ thường để so khớp dễ dàng
         text_lower = text.lower()
         
-        # 1. Chuẩn hóa các lỗi phát âm/nhận dạng chữ cái đầu
+        # 1. Chuẩn hóa các lỗi số thập phân/dấu chấm do Whisper nhận diện sai
+        text_lower = text_lower.replace("100.03", "103")
+        text_lower = text_lower.replace("100.02", "102")
+        text_lower = text_lower.replace("100.01", "101")
+        text_lower = text_lower.replace("200.03", "203")
+        text_lower = text_lower.replace("200.02", "202")
+        text_lower = text_lower.replace("200.01", "201")
+        
+        # 2. Chuẩn hóa các lỗi phát âm/nhận dạng chữ cái đầu kết hợp với số liền kề
+        text_lower = re.sub(r'\b(er|eth|eder|era|errer|error|ezr|ez|e-zr)\s*[-_]?\s*(\d{3,4})\b', r'r\2', text_lower)
+        text_lower = re.sub(r'\b(bày)\s*[-_]?\s*(\d{3,4})\b', r'pay\2', text_lower)
+        
+        # 3. Chuẩn hóa các lỗi chữ cái đơn lẻ đứng tách biệt
         prefix_replacements = {
             "e trở": "r",
             "era": "r",
@@ -128,7 +140,7 @@ class AgentService:
         for k, v in prefix_replacements.items():
             text_lower = re.sub(r'\b' + re.escape(k) + r'\b', v, text_lower)
             
-        # 2. Chuẩn hóa các từ số thành chữ số
+        # 4. Chuẩn hóa các từ số thành chữ số
         number_replacements = {
             "một trăm linh một": "101", "một trăm lẻ một": "101", "một không một": "101", "một lẻ một": "101", "100 linh 1": "101", "100 linh một": "101", "100-01": "101", "100-1": "101",
             "một trăm linh hai": "102", "một trăm lẻ hai": "102", "một không hai": "102", "một lẻ hai": "102", "100 linh hai": "102", "100 linh 2": "102", "100-02": "102", "100-2": "102",
@@ -136,6 +148,7 @@ class AgentService:
             "hai trăm linh một": "201", "hai trăm lẻ một": "201", "hai không một": "201", "hai lẻ một": "201", "200 linh 1": "201", "200 linh một": "201", "2001": "201", "200-01": "201", "200-1": "201",
             "hai trăm linh hai": "202", "hai trăm lẻ hai": "202", "hai không hai": "202", "hai lẻ hai": "202", "200 linh 2": "202", "200 linh hai": "202", "2002": "202", "200-02": "202", "200-2": "202",
             "hai trăm linh ba": "203", "hai trăm lẻ ba": "203", "hai không ba": "203", "hai lẻ ba": "203", "200 linh ba": "203", "200-3": "203", "2003": "203", "200-03": "203",
+            "1003": "103", "1002": "102", "1001": "101",
         }
         
         for phrase, num in number_replacements.items():
