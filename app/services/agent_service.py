@@ -37,7 +37,7 @@ class AgentService:
                     "và quyết định xem có cần gọi công cụ (tool) nào để kiểm tra thông tin hay không.\n\n"
                     "Danh sách các công cụ bạn có thể chọn:\n"
                     "1. `check_ride_status`: Tra cứu thông tin chuyến xe. Tham số: `ride_id` (định dạng Rxxx, ví dụ R101).\n"
-                    "2. `check_order_status`: Tra cứu thông tin đơn hàng ăn uống. Tham số: `order_id` (định dạng Fxxx, ví dụ F202).\n"
+                    "2. `check_order_status`: Tra cứu thông tin đơn hàng ăn uống. Tham số: `order_id` (định dạng Fxxx, ví dụ F202), `missing_item` (tên món ăn bị thiếu nếu được nhắc đến trong transcript, ví dụ 'Khoai tây chiên cỡ lớn' hoặc 'Coca Cola').\n"
                     "3. `verify_billing_fees`: Tra cứu thông tin hóa đơn giao dịch/thanh toán. Tham số: `target_id` (Rxxx hoặc Fxxx).\n"
                     "4. `get_refund_policy`: Lấy chính sách hoàn tiền và phí hủy chuyến. Không có tham số.\n"
                     "5. `create_support_ticket`: Tạo yêu cầu hỗ trợ (ticket) để chuyển cho nhân sự trực tiếp. "
@@ -335,6 +335,11 @@ class AgentService:
         if payment_id_match:
             tool_args["payment_id"] = "PAY" + payment_id_match.group(1)
 
+        if "khoai tay chien" in transcript_clean:
+            tool_args["missing_item"] = "Khoai tây chiên cỡ lớn"
+        elif "coca" in transcript_clean:
+            tool_args["missing_item"] = "Coca Cola"
+
         return {
             "transcript": transcript,
             "intent": intent,
@@ -447,6 +452,11 @@ class AgentService:
                     tool_args["order_id"] = "F202"
                 elif "203" in normalized_transcript:
                     tool_args["order_id"] = "F203"
+
+                if "khoai tay chien" in normalized_transcript or "khoai tây chiên" in normalized_transcript:
+                    tool_args["missing_item"] = "Khoai tây chiên cỡ lớn"
+                elif "coca" in normalized_transcript:
+                    tool_args["missing_item"] = "Coca Cola"
             
             tool_result = {}
             

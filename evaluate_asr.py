@@ -144,8 +144,8 @@ def run_evaluation():
         if intent_ok:
             intent_matches += 1
             
-        # Entity check (compare key entities like ride_id, order_id, payment_id)
-        entity_keys = ["ride_id", "order_id", "payment_id"]
+        # Entity check (compare key entities like ride_id, order_id, payment_id, missing_item)
+        entity_keys = ["ride_id", "order_id", "payment_id", "missing_item"]
         entity_ok = True
         for k in entity_keys:
             if k in expected_entities:

@@ -20,3 +20,6 @@ pdf_content.txt
 
 # Bỏ qua tất cả các file định dạng PDF nếu có
 *.pdf
+
+# Bỏ qua Slides
+slides.html
