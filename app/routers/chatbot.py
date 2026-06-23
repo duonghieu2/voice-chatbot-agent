@@ -26,9 +26,11 @@ async def handle_voice_input(
         agent_result = agent_service.process_transcript(transcript)
         
         # Trả về kết quả đầu ra
+        from app.core.config import settings
         return {
             "status": "success",
             "file_name": file.filename,
+            "whisper_model": settings.WHISPER_MODEL_NAME,
             "pipeline_results": {
                 "asr_transcript": transcript,
                 "intent": agent_result["intent"],

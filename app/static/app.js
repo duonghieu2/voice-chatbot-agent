@@ -430,7 +430,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const latency = ((Date.now() - startRequestTime) / 1000).toFixed(2);
 
             // Step 2 ASR (Success)
-            document.querySelector('.badge-whisper').classList.remove('hidden');
+            const whisperBadge = document.querySelector('.badge-whisper');
+            if (whisperBadge) {
+                const modelName = data.whisper_model ? (data.whisper_model.charAt(0).toUpperCase() + data.whisper_model.slice(1)) : 'Tiny';
+                whisperBadge.textContent = `Whisper ${modelName}`;
+                whisperBadge.classList.remove('hidden');
+            }
             stepAsr.className = 'pipeline-step success';
             stepAsrDetails.innerHTML = `
                 <div class="chat-bubble" style="background: rgba(255,255,255,0.02); border-color: var(--border-color); margin-top:0;">
