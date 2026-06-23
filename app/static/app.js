@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update Step 1 Status
         stepAudioBadge.textContent = 'Mẫu có sẵn';
-        stepAudioBadge.className = 'step-badge badge-whisper';
+        stepAudioBadge.className = 'step-badge badge-db';
         audioMetaInfo.innerHTML = `
             <p style="margin-bottom: 8px;"><strong>Đã chọn mẫu:</strong> ${sample.id} - ${sample.category}</p>
             <p style="margin-bottom: 8px; color: var(--text-secondary); font-style: italic;">"${sample.text}"</p>
@@ -376,9 +376,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         // Hide badges inside headers
-        document.querySelector('.badge-whisper').classList.add('hidden');
-        document.querySelector('.badge-gemini').classList.add('hidden');
-        document.querySelector('.badge-db').classList.add('hidden');
+        const asrBadge = document.querySelector('#step-asr .badge-whisper');
+        if (asrBadge) asrBadge.classList.add('hidden');
+        const llmBadge = document.querySelector('#step-llm .badge-gemini');
+        if (llmBadge) llmBadge.classList.add('hidden');
+        const toolBadge = document.querySelector('#step-tool .badge-db');
+        if (toolBadge) toolBadge.classList.add('hidden');
 
         // Clear details
         stepAsrDetails.innerHTML = '<p class="placeholder-text">Đang chờ âm thanh...</p>';
@@ -430,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const latency = ((Date.now() - startRequestTime) / 1000).toFixed(2);
 
             // Step 2 ASR (Success)
-            const whisperBadge = document.querySelector('.badge-whisper');
+            const whisperBadge = document.querySelector('#step-asr .badge-whisper');
             if (whisperBadge) {
                 const modelName = data.whisper_model ? (data.whisper_model.charAt(0).toUpperCase() + data.whisper_model.slice(1)) : 'Tiny';
                 whisperBadge.textContent = `Whisper ${modelName}`;
@@ -451,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await delay(800);
 
             // Step 3: LLM (Success)
-            document.querySelector('.badge-gemini').classList.remove('hidden');
+            document.querySelector('#step-llm .badge-gemini').classList.remove('hidden');
             stepLlm.className = 'pipeline-step success';
             
             const intentHtml = `<span class="intent-val"><i class="fa-solid fa-bullseye"></i> Intent: ${pipeline.intent}</span>`;
@@ -479,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stepToolDetails.innerHTML = `<div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang gọi Mock API nghiệp vụ và truy vấn cơ sở dữ liệu...</div>`;
             await delay(800);
 
-            document.querySelector('.badge-db').classList.remove('hidden');
+            document.querySelector('#step-tool .badge-db').classList.remove('hidden');
             stepTool.className = 'pipeline-step success';
             
             if (pipeline.tool_called) {

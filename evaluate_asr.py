@@ -151,9 +151,18 @@ def run_evaluation():
             if k in expected_entities:
                 expected_val = str(expected_entities[k]).upper()
                 detected_val = str(detected_args.get(k, "")).upper()
-                if expected_val != detected_val:
-                    entity_ok = False
-                    break
+                if k == "missing_item":
+                    # Đối với món ăn bị thiếu, hỗ trợ so khớp không dấu và chứa chuỗi (partial/substring matching)
+                    # vì khách hàng thường chỉ nói ngắn gọn "khoai tây chiên" thay vì đọc đầy đủ "Khoai tây chiên cỡ lớn"
+                    exp_clean = strip_accents(expected_val).strip().upper()
+                    det_clean = strip_accents(detected_val).strip().upper()
+                    if not det_clean or (det_clean not in exp_clean and exp_clean not in det_clean):
+                        entity_ok = False
+                        break
+                else:
+                    if expected_val != detected_val:
+                        entity_ok = False
+                        break
         
         if entity_ok:
             entity_matches += 1

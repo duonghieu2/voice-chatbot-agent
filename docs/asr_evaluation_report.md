@@ -11,7 +11,7 @@ Báo cáo này trình bày kết quả đánh giá định lượng mô hình nh
 | **Số lượng mẫu đánh giá** | 20 tệp | 20 tệp | Hoàn thành |
 | **Tỷ lệ lỗi từ (Average WER)** | **11.23%** | < 20.0% | ĐẠT |
 | **Tỷ lệ lỗi ký tự (Average CER)** | **6.64%** | < 10.0% | ĐẠT |
-| **Độ trễ trung bình (Latency)** | **2.92 giây** | < 5.0s (GPU) | ĐẠT |
+| **Độ trễ trung bình (Latency)** | **3.01 giây** | < 5.0s (GPU) | ĐẠT |
 | **Độ chính xác ý định (Intent Acc)** | **100.00%** | > 80.0% | ĐẠT |
 | **Độ chính xác thực thể (Entity Acc)** | **100.00%** | > 80.0% | ĐẠT |
 | **Độ chính xác gọi Tool (Tool Calling Acc)** | **100.00%** | > 80.0% | ĐẠT |
