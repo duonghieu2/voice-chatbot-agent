@@ -150,3 +150,18 @@ def test_create_support_ticket_endpoint():
     assert data["id"].startswith("TKT")
     assert data["status"] == "open"
     assert data["user_id"] == "U001"
+
+def test_request_refund_endpoint():
+    payload = {
+        "payment_id": "PAY202",
+        "amount": 35000.0,
+        "reason": "Giao thiếu khoai tây chiên"
+    }
+    response = client.post("/api/v1/tools/refund", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert "refund_details" in data
+    assert data["refund_details"]["payment_id"] == "PAY202"
+    assert data["refund_details"]["amount"] == 35000.0
+

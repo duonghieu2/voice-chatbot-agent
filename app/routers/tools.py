@@ -55,3 +55,23 @@ def create_support_ticket(ticket_data: SupportTicketCreate) -> Dict[str, Any]:
     if res["status"] != "success":
         raise HTTPException(status_code=400, detail=res["message"])
     return res["ticket_details"]
+
+from pydantic import BaseModel
+
+class RefundRequestCreate(BaseModel):
+    payment_id: str
+    amount: float
+    reason: str
+
+@router.post("/tools/refund")
+def request_refund(refund_data: RefundRequestCreate) -> Dict[str, Any]:
+    """API Mock cho request_refund tool."""
+    res = tool_service.request_refund(
+        payment_id=refund_data.payment_id,
+        amount=refund_data.amount,
+        reason=refund_data.reason
+    )
+    if res["status"] != "success":
+        raise HTTPException(status_code=400, detail=res["message"])
+    return res
+

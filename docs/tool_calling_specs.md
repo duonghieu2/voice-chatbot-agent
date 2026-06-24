@@ -152,3 +152,4 @@ FastAPI Backend hỗ trợ gọi các mock tool trực tuyến thông qua REST A
 | 4 | `/tools/billing-fees/{target_id}` | `GET` | Bản ghi hóa đơn giao dịch trong `payments` (mã HTTP 404 nếu không tồn tại). |
 | 5 | `/tools/refund-policy` | `GET` | Bộ điều khoản quy định hoàn phí trong `policies`. |
 | 6 | `/tools/ticket` | `POST` | Bản ghi ticket mới được tạo thành công trong `tickets`. |
+| 7 | `/tools/refund` | `POST` | Bản ghi yêu cầu hoàn tiền mới được tạo thành công trong `refunds`. |

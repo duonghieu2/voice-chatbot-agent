@@ -107,13 +107,14 @@ Tạo một cell mới và khởi chạy tiến trình nền (server.log sẽ gh
 !python colab_run.py --server > server.log 2>&1 &
 ```
 
-### 2. Mở cổng kết nối bằng Localtunnel
-Tạo một cell mới song song để mở kết nối public thông qua Localtunnel (miễn phí và không cần tạo tài khoản/token):
+### 2. Mở cổng kết nối bằng Cloudflare Tunnel (Khuyên dùng)
+Tạo một cell mới song song để tải, cài đặt client `cloudflared` của Cloudflare và mở kết nối public ổn định (không lo bị ngắt kết nối ngẫu nhiên hay giới hạn băng thông):
 ```bash
-# Cài đặt localtunnel qua npm
-!npm install -g localtunnel
+# 1. Tải và cài đặt Cloudflare Tunnel client
+!wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+!dpkg -i cloudflared-linux-amd64.deb
 
-# Expose cổng 8000 ra ngoài
-!lt --port 8000
+# 2. Expose cổng 8000 của FastAPI ra Internet
+!cloudflared tunnel --url http://localhost:8000
 ```
-*Colab sẽ trả về một đường link dạng `https://XXXX.loca.lt`. Bạn có thể dùng đường link này làm Base URL để thực hiện gửi file âm thanh `/api/v1/chatbot/voice` từ Postman, cURL hoặc ứng dụng Frontend bên ngoài.*
+*Trình Tunnel sẽ trả về một đường link ngẫu nhiên có đuôi `.trycloudflare.com`. Bạn có thể dùng đường link này làm Base URL để thực hiện gửi file âm thanh `/api/v1/chatbot/voice` từ Postman, cURL hoặc ứng dụng Frontend bên ngoài.*
