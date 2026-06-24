@@ -70,5 +70,27 @@ TOOL_DEFINITIONS = [
         },
         "required": ["user_id", "category", "description"]
       }
+    },
+    {
+      "name": "request_refund",
+      "description": "Tạo yêu cầu hoàn tiền cho một giao dịch thanh toán bị sự cố hoặc thiếu món.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "payment_id": {
+            "type": "string",
+            "description": "Mã định danh giao dịch thanh toán cần hoàn tiền, định dạng PAYxxx (ví dụ: PAY202)."
+          },
+          "amount": {
+            "type": "number",
+            "description": "Số tiền hoàn (ví dụ: 35000.0)."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Lý do hoàn tiền (ví dụ: 'Giao thiếu món khoai tây chiên cỡ lớn')."
+          }
+        },
+        "required": ["payment_id", "amount", "reason"]
+      }
     }
 ]

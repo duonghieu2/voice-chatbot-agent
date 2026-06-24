@@ -88,10 +88,11 @@ def test_get_tool_definitions():
     assert response.status_code == 200
     data = response.json()
     assert "tools" in data
-    assert len(data["tools"]) == 5
+    assert len(data["tools"]) == 6
     tool_names = [t["name"] for t in data["tools"]]
     assert "check_ride_status" in tool_names
     assert "create_support_ticket" in tool_names
+    assert "request_refund" in tool_names
 
 def test_check_ride_status_endpoint():
     response = client.get("/api/v1/tools/ride-status/R101")

@@ -4,7 +4,7 @@ Tài liệu này thuyết minh chi tiết cấu trúc định nghĩa công cụ 
 
 ---
 
-## 1. Danh sách Định nghĩa JSON Schema của 5 Tools cốt lõi
+## 1. Danh sách Định nghĩa JSON Schema của 6 Tools cốt lõi
 
 Các công cụ được thiết kế theo định dạng chuẩn tương thích với cơ chế Tool Calling của OpenAI và Gemini API. Các đặc tả này được cung cấp trực tuyến tại Endpoint `/api/v1/tools/definitions`.
 
@@ -110,6 +110,34 @@ Các công cụ được thiết kế theo định dạng chuẩn tương thích
 }
 ```
 
+### Tool 6: `request_refund`
+- **Mô tả:** Tạo yêu cầu hoàn tiền cho một giao dịch thanh toán bị sự cố hoặc thiếu món.
+- **Schema định nghĩa:**
+```json
+{
+  "name": "request_refund",
+  "description": "Tạo yêu cầu hoàn tiền cho một giao dịch thanh toán bị sự cố hoặc thiếu món.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "payment_id": {
+        "type": "string",
+        "description": "Mã định danh giao dịch thanh toán cần hoàn tiền, định dạng PAYxxx (ví dụ: PAY202)."
+      },
+      "amount": {
+        "type": "number",
+        "description": "Số tiền hoàn (ví dụ: 35000.0)."
+      },
+      "reason": {
+        "type": "string",
+        "description": "Lý do hoàn tiền (ví dụ: 'Giao thiếu món khoai tây chiên cỡ lớn')."
+      }
+    },
+    "required": ["payment_id", "amount", "reason"]
+  }
+}
+```
+
 ---
 
 ## 2. API Endpoints của Mock Tools trên FastAPI Backend
@@ -118,7 +146,7 @@ FastAPI Backend hỗ trợ gọi các mock tool trực tuyến thông qua REST A
 
 | STT | Endpoint | Phương thức | Dữ liệu trả về (Mock JSON) |
 | :--- | :--- | :---: | :--- |
-| 1 | `/tools/definitions` | `GET` | Bản kê JSON Schema của cả 5 tools. |
+| 1 | `/tools/definitions` | `GET` | Bản kê JSON Schema của cả 6 tools. |
 | 2 | `/tools/ride-status/{ride_id}` | `GET` | Bản ghi chuyến xe trong `rides` (mã HTTP 404 nếu không tồn tại). |
 | 3 | `/tools/order-status/{order_id}` | `GET` | Bản ghi đơn hàng trong `food_orders` (mã HTTP 404 nếu không tồn tại). |
 | 4 | `/tools/billing-fees/{target_id}` | `GET` | Bản ghi hóa đơn giao dịch trong `payments` (mã HTTP 404 nếu không tồn tại). |

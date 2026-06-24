@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.get("/tools/definitions")
 def get_definitions() -> Dict[str, List[Dict[str, Any]]]:
-    """Trả về danh sách định nghĩa JSON Schema của 5 công cụ cốt lõi phục vụ Tool Calling."""
+    """Trả về danh sách định nghĩa JSON Schema của 6 công cụ cốt lõi phục vụ Tool Calling."""
     return {"tools": TOOL_DEFINITIONS}
 
 @router.get("/tools/ride-status/{ride_id}")
